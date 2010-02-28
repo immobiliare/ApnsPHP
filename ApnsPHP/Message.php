@@ -181,7 +181,7 @@ class ApnsPHP_Message
 	}
 
 	/**
-	 * undocumented function.
+	 * Set a custom property.
 	 *
 	 * @param  $sName @type string Custom property name.
 	 * @param  $mValue @type mixed Custom property value.
