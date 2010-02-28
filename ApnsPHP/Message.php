@@ -32,6 +32,10 @@
  */ 
 class ApnsPHP_Message
 {
+	const PAYLOAD_MAXIMUM_SIZE = 256; /**< @type integer The maximum size allowed for a notification payload. */
+	
+	protected $_bAutoAdjustLongPayload = true; /**< @type boolean If the JSON payload is longer than maximum allowed size, shorts message text. */
+	
 	protected $_aDeviceTokens = array(); /**< @type array Recipients device tokens. */
 
 	protected $_sText; /**< @type string Alert message to display to the user. */
@@ -174,6 +178,27 @@ class ApnsPHP_Message
 	}
 	
 	/**
+	 * Set the auto-adjust long payload value.
+	 *
+	 * @param  $bAutoAdjust @type boolean If true a long payload is shorted cutting
+	 *         long text value.
+	 */
+	public function setAutoAdjustLongPayload($bAutoAdjust)
+	{
+		$this->_bAutoAdjustLongPayload = (boolean)$bAutoAdjust;
+	}
+	
+	/**
+	 * Get the auto-adjust long payload value.
+	 *
+	 * @return @type boolean The auto-adjust long payload value.
+	 */
+	public function getAutoAdjustLongPayload()
+	{
+		return $this->_bAutoAdjustLongPayload;
+	}
+	
+	/**
 	 * PHP Magic Method. When an object is "converted" to a string, JSON-encoded
 	 * payload is returned.
 	 *
@@ -181,17 +206,24 @@ class ApnsPHP_Message
 	 */
 	public function __toString()
 	{
-		return $this->_getPayload();
+		try {
+			$sJSONPayload = $this->getPayload();
+		} catch (ApnsPHP_Message_Exception $e) {
+			$sJSONPayload = '';
+		}
+		return $sJSONPayload;
 	}
 	
 	/**
 	 * Convert the message in a JSON-encoded payload.
 	 *
+	 * @throws ApnsPHP_Message_Exception if payload is longer than maximum allowed
+	 *         size and AutoAdjustLongPayload is disabled.
 	 * @return @type string JSON-encoded payload.
 	 */
-	protected function _getPayload()
+	public function getPayload()
 	{
-		$payload['aps'] = array();
+		$payload = $payload['aps'] = array();
 		$p = &$payload['aps'];
 		
 		if (isset($this->_sText)) {
@@ -203,6 +235,30 @@ class ApnsPHP_Message
 		if (isset($this->_sSound)) {
 			$p['sound'] = (string)$this->_sSound;
 		}
-		return json_encode($payload, JSON_FORCE_OBJECT);
+		
+		$sJSONPayload = json_encode($payload, JSON_FORCE_OBJECT);
+		$nJSONPayloadLen = strlen($sJSONPayload);
+		
+		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {
+			if ($this->_bAutoAdjustLongPayload) {
+				$nTextLen = strlen($this->_sText);
+				if ($nJSONPayloadLen - $nTextLen <= self::PAYLOAD_MAXIMUM_SIZE) {
+					$this->_sText = substr($this->_sText, 0, $nTextLen - ($nJSONPayloadLen - self::PAYLOAD_MAXIMUM_SIZE));
+					return $this->getPayload();
+				} else {
+					throw new ApnsPHP_Message_Exception(
+						"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " . 
+						self::PAYLOAD_MAXIMUM_SIZE . " bytes. The message text can not be auto-adjusted."
+					);
+				}
+			} else {
+				throw new ApnsPHP_Message_Exception(
+					"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " . 
+					self::PAYLOAD_MAXIMUM_SIZE . " bytes"
+				);
+			}
+		}
+		
+		return $sJSONPayload;
 	}
 }

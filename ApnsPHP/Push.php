@@ -72,7 +72,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 */
 	public function add(ApnsPHP_Message $message)
 	{
-		$sMessagePayload = (string)$message;
+		$sMessagePayload = $message->getPayload();
 		$nRecipients = $message->getRecipientsNumber();
 		
 		for ($i = 0; $i < $nRecipients; $i++) { 
