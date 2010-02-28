@@ -42,6 +42,9 @@ class ApnsPHP_Message
 	protected $_nBadge; /**< @type integer Number to badge the application icon with. */
 	protected $_sSound; /**< @type string Sound to play. */
 	
+	protected $_sCustomPropertyName; /**< @type string Custom property name. */
+	protected $_mCustomPropertyValue; /**< @type mixed Custom property value. */
+	
 	/**
 	 * Constructor.
 	 *
@@ -176,7 +179,46 @@ class ApnsPHP_Message
 	{
 		return $this->_sSound;
 	}
+
+	/**
+	 * undocumented function.
+	 *
+	 * @param  $sName @type string Custom property name.
+	 * @param  $mValue @type mixed Custom property value.
+	 * @throws ApnsPHP_Message_Exception if custom property name is not outside
+	 *         the Apple-reserved 'aps' namespace.
+	 */
+	public function setCustomProperty($sName, $mValue)
+	{
+		if ($sName == 'aps') {
+			throw new ApnsPHP_Message_Exception(
+				"Property name 'aps' can not be used for custom property."
+			);
+		}
+		$this->_sCustomPropertyName = trim($sName);
+		$this->_mCustomPropertyValue = $mValue;
+	}
 	
+	/**
+	 * Get the custom property name.
+	 * 
+	 * @return @type string The custom property name.
+	 */
+	public function getCustomPropertyName()
+	{
+		return $this->_sCustomPropertyName;
+	}
+
+	/**
+	 * Get the custom property value.
+	 * 
+	 * @return @type mixed The custom property value.
+	 */
+	public function getCustomPropertyValue()
+	{
+		return $this->_mCustomPropertyValue;
+	}
+
 	/**
 	 * Set the auto-adjust long payload value.
 	 *
@@ -223,20 +265,23 @@ class ApnsPHP_Message
 	 */
 	public function getPayload()
 	{
-		$payload = $payload['aps'] = array();
-		$p = &$payload['aps'];
+		$aPayload['aps'] = array();
 		
 		if (isset($this->_sText)) {
-			$p['alert'] = (string)$this->_sText;
+			$aPayload['aps']['alert'] = (string)$this->_sText;
 		}
 		if (isset($this->_nBadge) && $this->_nBadge > 0) {
-			$p['badge'] = (int)$this->_nBadge;
+			$aPayload['aps']['badge'] = (int)$this->_nBadge;
 		}
 		if (isset($this->_sSound)) {
-			$p['sound'] = (string)$this->_sSound;
+			$aPayload['aps']['sound'] = (string)$this->_sSound;
 		}
-		
-		$sJSONPayload = json_encode($payload, JSON_FORCE_OBJECT);
+
+		if (isset($this->_sCustomPropertyName, $this->_mCustomPropertyValue)) {
+			$aPayload[$this->_sCustomPropertyName] = $this->_mCustomPropertyValue;
+		}
+
+		$sJSONPayload = json_encode($aPayload, JSON_FORCE_OBJECT);
 		$nJSONPayloadLen = strlen($sJSONPayload);
 		
 		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {

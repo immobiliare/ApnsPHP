@@ -51,6 +51,9 @@ $message->setText('Hello APNs-enabled device!');
 // Play the default sound
 $message->setSound();
 
+// Set a custom property
+$message->setCustomProperty('acme2', array('bang', 'whiz'));
+
 // Add the message to the message queue
 $push->add($message);
 
