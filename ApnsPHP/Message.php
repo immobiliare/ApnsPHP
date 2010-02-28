@@ -155,9 +155,10 @@ class ApnsPHP_Message
 	/**
 	 * Set the sound to play.
 	 *
-	 * @param  $sSound @type string A sound to play.
+	 * @param  $sSound @type string @optional A sound to play ('default sound' is
+	 *         the default sound).
 	 */
-	public function setSound($sSound)
+	public function setSound($sSound = 'default')
 	{
 		$this->_sSound = $sSound;
 	}

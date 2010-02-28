@@ -49,7 +49,7 @@ $Message->setBadge(3);
 $Message->setText('Hello APNs-enabled device!');
 
 // Play the default sound
-$Message->setSound('default');
+$Message->setSound();
 
 // Add the message to the message queue
 $Push->add($Message);
