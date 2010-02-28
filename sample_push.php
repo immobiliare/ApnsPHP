@@ -28,40 +28,40 @@ error_reporting(-1);
 require_once 'ApnsPHP/Autoload.php';
 
 // Instanciate a new ApnsPHP_Push object
-$Push = new ApnsPHP_Push(
+$push = new ApnsPHP_Push(
 	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
 	'server_cerificates_bundle_sandbox.pem'
 );
 
 // Set the Root Certificate Autority to verify the Apple remote peer
-$Push->setRootCertificationAuthority('entrust_root_certification_authority.pem');
+$push->setRootCertificationAuthority('entrust_root_certification_authority.pem');
 
 // Connect to the Apple Push Notification Service
-$Push->connect();
+$push->connect();
 
 // Instantiate a new Message with a single recipient
-$Message = new ApnsPHP_Message('e3434b98811836079119bbb8617373073292d045dc195e87de5765ebae5e50d7');
+$message = new ApnsPHP_Message('e3434b98811836079119bbb8617373073292d045dc195e87de5765ebae5e50d7');
 
 // Set badge icon to "3"
-$Message->setBadge(3);
+$message->setBadge(3);
 
 // Set a simple welcome text
-$Message->setText('Hello APNs-enabled device!');
+$message->setText('Hello APNs-enabled device!');
 
 // Play the default sound
-$Message->setSound();
+$message->setSound();
 
 // Add the message to the message queue
-$Push->add($Message);
+$push->add($message);
 
 // Send all messages in the message queue
-$Push->send();
+$push->send();
 
 // Disconnect from the Apple Push Notification Service
-$Push->disconnect();
+$push->disconnect();
 
 // Examine the error message queue
-$aErrorQueue = $Push->getQueue();
+$aErrorQueue = $push->getQueue();
 if (!empty($aErrorQueue)) {
 	var_dump($aErrorQueue);
 }

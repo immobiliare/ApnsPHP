@@ -28,18 +28,18 @@ error_reporting(-1);
 require_once 'ApnsPHP/Autoload.php';
 
 // Instanciate a new ApnsPHP_Feedback object
-$Feedback = new ApnsPHP_Feedback(
+$feedback = new ApnsPHP_Feedback(
 	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
 	'server_cerificates_bundle_sandbox.pem'
 );
 
 // Connect to the Apple Push Notification Feedback Service
-$Feedback->connect();
+$feedback->connect();
 
-$aDeviceTokens = $Feedback->receive();
+$aDeviceTokens = $feedback->receive();
 if (!empty($aDeviceTokens)) {
 	var_dump($aDeviceTokens);
 }
 
 // Disconnect from the Apple Push Notification Feedback Service
-$Feedback->disconnect();
+$feedback->disconnect();
