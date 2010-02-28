@@ -58,7 +58,7 @@ while ($Server->run()) {
 		// Instantiate a new Message with a single recipient
 		$Message = new ApnsPHP_Message('e3434b98811836079119bbb8617373073292d045dc195e87de5765ebae5e50d7');
 
-		// Set badge icon to "3"
+		// Set badge icon to "i"
 		$Message->setBadge($i);
 		
 		// Add the message to the message queue
