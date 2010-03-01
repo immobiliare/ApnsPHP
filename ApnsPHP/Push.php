@@ -110,7 +110,9 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		foreach($this->_aMessageQueue as $k => &$aMessage) {
 			$bSuccessfulSent = false;
 			while ($bSuccessfulSent == false && $aMessage['RETRY_TIMES'] <= $this->_nSendRetryTimes) {
-				pcntl_signal_dispatch();
+				if (function_exists('pcntl_signal_dispatch')) {
+					pcntl_signal_dispatch();
+				}
 				if ($aMessage['RETRY_TIMES'] > 0) {
 					$this->_log(
 						'INFO: Retrying to send message ' . ($k+1) . " (" .
