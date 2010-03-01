@@ -2,7 +2,7 @@
 /**
  * @file
  * ApnsPHP_Message class definition.
- * 
+ *
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
@@ -12,7 +12,8 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to aldo.armiento@gmail.com so we can send you a copy immediately.
- * 
+ *
+ * @author (C) 2010 Aldo Armiento (aldo.armiento@gmail.com)
  * @version $Id$
  */
 
@@ -23,28 +24,28 @@
 
 /**
  * The Push Notification Message.
- * 
+ *
  * The class represents a message to be delivered to an end user device.
  * Notification Service.
- * 
+ *
  * @ingroup ApnsPHP_Message
  * @see http://tinyurl.com/ApplePushNotificationPayload
- */ 
+ */
 class ApnsPHP_Message
 {
 	const PAYLOAD_MAXIMUM_SIZE = 256; /**< @type integer The maximum size allowed for a notification payload. */
-	
+
 	protected $_bAutoAdjustLongPayload = true; /**< @type boolean If the JSON payload is longer than maximum allowed size, shorts message text. */
-	
+
 	protected $_aDeviceTokens = array(); /**< @type array Recipients device tokens. */
 
 	protected $_sText; /**< @type string Alert message to display to the user. */
 	protected $_nBadge; /**< @type integer Number to badge the application icon with. */
 	protected $_sSound; /**< @type string Sound to play. */
-	
+
 	protected $_sCustomPropertyName; /**< @type string Custom property name. */
 	protected $_mCustomPropertyValue; /**< @type mixed Custom property value. */
-	
+
 	/**
 	 * Constructor.
 	 *
@@ -56,7 +57,7 @@ class ApnsPHP_Message
 			$this->addRecipient($sDeviceToken);
 		}
 	}
-	
+
 	/**
 	 * Add a recipient device token.
 	 *
@@ -73,7 +74,7 @@ class ApnsPHP_Message
 		}
 		$this->_aDeviceTokens[] = $sDeviceToken;
 	}
-	
+
 	/**
 	 * Get a recipient.
 	 *
@@ -91,7 +92,7 @@ class ApnsPHP_Message
 		}
 		return $this->_aDeviceTokens[$nRecipient];
 	}
-	
+
 	/**
 	 * Get the number of recipients.
 	 *
@@ -101,7 +102,7 @@ class ApnsPHP_Message
 	{
 		return count($this->_aDeviceTokens);
 	}
-	
+
 	/**
 	 * Get all recipients.
 	 *
@@ -111,7 +112,7 @@ class ApnsPHP_Message
 	{
 		return $this->_aDeviceTokens;
 	}
-	
+
 	/**
 	 * Set the alert message to display to the user.
 	 *
@@ -148,7 +149,7 @@ class ApnsPHP_Message
 		}
 		$this->_nBadge = $nBadge;
 	}
-	
+
 	/**
 	 * Get the number to badge the application icon with.
 	 *
@@ -198,10 +199,10 @@ class ApnsPHP_Message
 		$this->_sCustomPropertyName = trim($sName);
 		$this->_mCustomPropertyValue = $mValue;
 	}
-	
+
 	/**
 	 * Get the custom property name.
-	 * 
+	 *
 	 * @return @type string The custom property name.
 	 */
 	public function getCustomPropertyName()
@@ -211,7 +212,7 @@ class ApnsPHP_Message
 
 	/**
 	 * Get the custom property value.
-	 * 
+	 *
 	 * @return @type mixed The custom property value.
 	 */
 	public function getCustomPropertyValue()
@@ -229,7 +230,7 @@ class ApnsPHP_Message
 	{
 		$this->_bAutoAdjustLongPayload = (boolean)$bAutoAdjust;
 	}
-	
+
 	/**
 	 * Get the auto-adjust long payload value.
 	 *
@@ -239,7 +240,7 @@ class ApnsPHP_Message
 	{
 		return $this->_bAutoAdjustLongPayload;
 	}
-	
+
 	/**
 	 * PHP Magic Method. When an object is "converted" to a string, JSON-encoded
 	 * payload is returned.
@@ -255,7 +256,7 @@ class ApnsPHP_Message
 		}
 		return $sJSONPayload;
 	}
-	
+
 	/**
 	 * Convert the message in a JSON-encoded payload.
 	 *
@@ -266,7 +267,7 @@ class ApnsPHP_Message
 	public function getPayload()
 	{
 		$aPayload['aps'] = array();
-		
+
 		if (isset($this->_sText)) {
 			$aPayload['aps']['alert'] = (string)$this->_sText;
 		}
@@ -283,7 +284,7 @@ class ApnsPHP_Message
 
 		$sJSONPayload = json_encode($aPayload, JSON_FORCE_OBJECT);
 		$nJSONPayloadLen = strlen($sJSONPayload);
-		
+
 		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {
 			if ($this->_bAutoAdjustLongPayload) {
 				$nTextLen = strlen($this->_sText);
@@ -292,18 +293,18 @@ class ApnsPHP_Message
 					return $this->getPayload();
 				} else {
 					throw new ApnsPHP_Message_Exception(
-						"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " . 
+						"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " .
 						self::PAYLOAD_MAXIMUM_SIZE . " bytes. The message text can not be auto-adjusted."
 					);
 				}
 			} else {
 				throw new ApnsPHP_Message_Exception(
-					"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " . 
+					"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " .
 					self::PAYLOAD_MAXIMUM_SIZE . " bytes"
 				);
 			}
 		}
-		
+
 		return $sJSONPayload;
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * @file
  * ApnsPHP_Abstract class definition.
- * 
+ *
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
@@ -12,13 +12,14 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to aldo.armiento@gmail.com so we can send you a copy immediately.
- * 
+ *
+ * @author (C) 2010 Aldo Armiento (aldo.armiento@gmail.com)
  * @version $Id$
  */
 
 /**
  * @mainpage
- * 
+ *
  * @li ApnsPHP on Google Code: http://apns-php.googlecode.com/
  */
 
@@ -29,25 +30,25 @@
 /**
  * Abstract class: this is the superclass for all Apple Push Notification Service
  * classes.
- * 
+ *
  * This class is responsible for the connection to the Apple Push Notification Service
  * and Feedback.
- * 
+ *
  * @ingroup ApplePushNotificationService
  * @see http://tinyurl.com/ApplePushNotificationService
- */ 
+ */
 abstract class ApnsPHP_Abstract
 {
 	const ENVIRONMENT_PRODUCTION = 0; /**< @type integer Production environment. */
 	const ENVIRONMENT_SANDBOX = 1; /**< @type integer Sandbox environment. */
 
 	const DEVICE_BINARY_SIZE = 32; /**< @type integer Device token length. */
-	
+
 	const CONNECT_RETRY_INTERVAL = 1000000; /**< @type integer Default connect retry interval in micro seconds. */
 	const SOCKET_SELECT_TIMEOUT = 500000; /**< @type integer Default socket select timeout in micro seconds. */
-	
+
 	protected $_aServiceURLs = array(); /**< @type array Container for service URLs environments. */
-	
+
 	protected $_nEnvironment; /**< @type integer Active environment. */
 
 	protected $_nConnectTimeout; /**< @type integer Connect timeout in seconds. */
@@ -62,7 +63,7 @@ abstract class ApnsPHP_Abstract
 	protected $_logger; /**< @type ApnsPHP_Log_Interface Logger. */
 
 	protected $_hSocket; /**< @type resource SSL Socket. */
-	
+
 	/**
 	 * Constructor.
 	 *
@@ -87,7 +88,7 @@ abstract class ApnsPHP_Abstract
 			);
 		}
 		$this->_sProviderCertificateFile = $sProviderCertificateFile;
-		
+
 		$this->_nConnectTimeout = ini_get("default_socket_timeout");
 		$this->_nConnectRetryInterval = self::CONNECT_RETRY_INTERVAL;
 		$this->_nSocketSelectTimeout = self::SOCKET_SELECT_TIMEOUT;
@@ -95,14 +96,14 @@ abstract class ApnsPHP_Abstract
 
 	/**
 	 * Set the Logger instance to use for logging purpose.
-	 * 
+	 *
 	 * The default logger is ApnsPHP_Log_Embedded, an instance
 	 * of ApnsPHP_Log_Interface that simply print to standard
 	 * output log messages.
-	 * 
+	 *
 	 * To set a custom logger you have to implement ApnsPHP_Log_Interface
 	 * and use setLogger, otherwise standard logger will be used.
-	 * 
+	 *
 	 * @see ApnsPHP_Log_Interface
 	 * @see ApnsPHP_Log_Embedded
 	 *
@@ -119,13 +120,13 @@ abstract class ApnsPHP_Abstract
 		}
 		if (!($logger instanceof ApnsPHP_Log_Interface)) {
 			throw new ApnsPHP_Exception(
-				"Unable to use an instance of '" . get_class($logger) . "' as logger: " . 
+				"Unable to use an instance of '" . get_class($logger) . "' as logger: " .
 				"a logger must implements ApnsPHP_Log_Interface."
 			);
 		}
 		$this->_logger = $logger;
 	}
-	
+
 	/**
 	 * Get the Logger instance.
 	 *
@@ -138,10 +139,10 @@ abstract class ApnsPHP_Abstract
 
 	/**
 	 * Set the Root Certification Authority file.
-	 * 
+	 *
 	 * Setting the Root Certification Authority file automatically set peer verification
 	 * on connect.
-	 * 
+	 *
 	 * @see http://tinyurl.com/GeneralProviderRequirements
 	 * @see http://www.entrust.net/
 	 * @see https://www.entrust.net/downloads/root_index.cfm
@@ -160,7 +161,7 @@ abstract class ApnsPHP_Abstract
 		}
 		$this->_sRootCertificationAuthorityFile = $sRootCertificationAuthorityFile;
 	}
-	
+
 	/**
 	 * Get the Root Certification Authority file path.
 	 *
@@ -173,7 +174,7 @@ abstract class ApnsPHP_Abstract
 
 	/**
 	 * Set the connection timeout.
-	 * 
+	 *
 	 * The default connection timeout is the PHP internal value "default_socket_timeout".
 	 * @see http://php.net/manual/en/filesystem.configuration.php
 	 *
@@ -196,7 +197,7 @@ abstract class ApnsPHP_Abstract
 
 	/**
 	 * Set the connect retry times value.
-	 * 
+	 *
 	 * If the client is unable to connect to the server retries at least for this
 	 * value. The default connect retry times is 3.
 	 *
@@ -206,7 +207,7 @@ abstract class ApnsPHP_Abstract
 	{
 		$this->_nConnectRetryTimes = (int)$nRetryTimes;
 	}
-	
+
 	/**
 	 * Get the connect retry time value.
 	 *
@@ -219,10 +220,10 @@ abstract class ApnsPHP_Abstract
 
 	/**
 	 * Set the connect retry interval.
-	 * 
+	 *
 	 * If the client is unable to connect to the server retries at least for ConnectRetryTimes
 	 * and waits for this value between each attempts.
-	 * 
+	 *
 	 * @see setConnectRetryTimes
 	 *
 	 * @param  $nRetryInterval @type integer Connect retry interval in micro seconds.
@@ -231,7 +232,7 @@ abstract class ApnsPHP_Abstract
 	{
 		$this->_nConnectRetryInterval = (int)$nRetryInterval;
 	}
-	
+
 	/**
 	 * Get the connect retry interval.
 	 *
@@ -244,17 +245,17 @@ abstract class ApnsPHP_Abstract
 
 	/**
 	 * Set the TCP socket select timeout.
-	 * 
+	 *
 	 * After writing to socket waits for at least this value for read stream to
 	 * change status.
-	 * 
+	 *
 	 * In Apple Push Notification protocol there isn't a real-time
 	 * feedback about the correctness of notifications pushed to the server; so after
 	 * each write to server waits at least SocketSelectTimeout. If, during this
 	 * time, the read stream change its status and socket received an end-of-file
 	 * from the server the notification pushed to server was broken, the server
 	 * has closed the connection and the client needs to reconnect.
-	 * 
+	 *
 	 * @see http://php.net/stream_select
 	 *
 	 * @param  $nSelectTimeout @type integer Socket select timeout in micro seconds.
@@ -276,7 +277,7 @@ abstract class ApnsPHP_Abstract
 
 	/**
 	 * Connects to Apple Push Notification service server.
-	 * 
+	 *
 	 * Retries ConnectRetryTimes if unable to connect and waits setConnectRetryInterval
 	 * between each attempts.
 	 *
@@ -298,7 +299,7 @@ abstract class ApnsPHP_Abstract
 				} else {
 					$this->_log('ERROR: ' . $e->getMessage());
 					$this->_log(
-						"INFO: Retry to connect (" . ($nRetry+1) . 
+						"INFO: Retry to connect (" . ($nRetry+1) .
 						"/{$this->_nConnectRetryTimes})..."
 					);
 					usleep($this->_nConnectRetryInterval);
@@ -332,7 +333,7 @@ abstract class ApnsPHP_Abstract
 	{
 		$sURL = $this->_aServiceURLs[$this->_nEnvironment];
 		unset($aURLs);
-		
+
 		$this->_log("INFO: Trying {$sURL}...");
 
 		/**
@@ -344,7 +345,7 @@ abstract class ApnsPHP_Abstract
 			'local_cert' => $this->_sProviderCertificateFile
 		)));
 
-		$this->_hSocket = @stream_socket_client($sURL, $nError, $sError, 
+		$this->_hSocket = @stream_socket_client($sURL, $nError, $sError,
 			$this->_nConnectTimeout, STREAM_CLIENT_CONNECT, $streamContext);
 
 		if (!$this->_hSocket) {
@@ -355,12 +356,12 @@ abstract class ApnsPHP_Abstract
 
 		stream_set_blocking($this->_hSocket, 0);
 		stream_set_write_buffer($this->_hSocket, 0);
-		
+
 		$this->_log("INFO: Connected to {$sURL}.");
 
 		return true;
 	}
-	
+
 	/**
 	 * Logs a message through the Logger.
 	 *

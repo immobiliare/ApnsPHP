@@ -2,7 +2,7 @@
 /**
  * @file
  * ApnsPHP_Feedback class definition.
- * 
+ *
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
@@ -12,7 +12,8 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to aldo.armiento@gmail.com so we can send you a copy immediately.
- * 
+ *
+ * @author (C) 2010 Aldo Armiento (aldo.armiento@gmail.com)
  * @version $Id$
  */
 
@@ -23,7 +24,7 @@
 
 /**
  * The Feedback Service client.
- * 
+ *
  * Apple Push Notification Service includes a feedback service that APNs continually
  * updates with a per-application list of devices for which there were failed-delivery
  * attempts. Providers should periodically query the feedback service to get the
@@ -31,25 +32,25 @@
  * its topic. Then, after verifying that the application hasn’t recently been re-registered
  * on the identified devices, a provider should stop sending notifications to these
  * devices.
- * 
+ *
  * @ingroup ApnsPHP_Feedback
  * @see http://tinyurl.com/ApplePushNotificationFeedback
- */ 
+ */
 class ApnsPHP_Feedback extends ApnsPHP_Abstract
 {
 	const TIME_BINARY_SIZE = 4; /**< @type integer Timestamp binary size in bytes. */
 	const TOKEN_LENGTH_BINARY_SIZE = 2; /**< @type integer Token length binary size in bytes. */
-	
+
 	protected $_aServiceURLs = array(
 		'ssl://feedback.push.apple.com:2196', // Production environment
 		'ssl://feedback.sandbox.push.apple.com:2196' // Sandbox environment
 	); /**< @type array Feedback URLs environments. */
-	
+
 	protected $_aFeedback; /**< @type array Feedback container. */
-	
+
 	/**
 	 * Receives feedback tuples from Apple Push Notification Service feedback.
-	 * 
+	 *
 	 * Every tuple (array) contains:
 	 * @li @c timestamp indicating when the APNs determined that the application
 	 *     no longer exists on the device. This value represents the seconds since
@@ -65,7 +66,7 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 	public function receive()
 	{
 		$nFeedbackTupleLen = self::TIME_BINARY_SIZE + self::TOKEN_LENGTH_BINARY_SIZE + self::DEVICE_BINARY_SIZE;
-		
+
 		$this->_aFeedback = array();
 		$sBuffer = '';
 		while (!feof($this->_hSocket)) {
@@ -76,7 +77,7 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 				$this->_log("INFO: {$nCurrBufferLen} bytes read.");
 			}
 			unset($sCurrBuffer, $nCurrBufferLen);
-			
+
 			$nBufferLen = strlen($sBuffer);
 			if ($nBufferLen >= $nFeedbackTupleLen) {
 				$nFeedbackTuples = floor($nBufferLen / $nFeedbackTupleLen);
@@ -91,7 +92,7 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 					unset($aFeedback);
 				}
 			}
-			
+
 			$read = array($this->_hSocket);
 			$null = NULL;
 			$nChangedStreams = stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
@@ -102,7 +103,7 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 		}
 		return $this->_aFeedback;
 	}
-	
+
 	/**
 	 * Parses binary tuples.
 	 *

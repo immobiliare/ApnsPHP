@@ -2,7 +2,7 @@
 /**
  * @file
  * ApnsPHP_Push class definition.
- * 
+ *
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
@@ -12,7 +12,8 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to aldo.armiento@gmail.com so we can send you a copy immediately.
- * 
+ *
+ * @author (C) 2010 Aldo Armiento (aldo.armiento@gmail.com)
  * @version $Id$
  */
 
@@ -23,18 +24,18 @@
 
 /**
  * The Push Notification Provider.
- * 
+ *
  * The class manages a message queue and sends notifications payload to Apple Push
  * Notification Service.
- * 
+ *
  * @ingroup ApnsPHP_Push
- */ 
+ */
 class ApnsPHP_Push extends ApnsPHP_Abstract
 {
 	const COMMAND_PUSH = 0; /**< @type integer Payload command. */
-	
+
 	protected $_nSendRetryTimes = 3; /**< @type integer Send retry times. */
-	
+
 	protected $_aServiceURLs = array(
 		'ssl://gateway.push.apple.com:2195', // Production environment
 		'ssl://gateway.sandbox.push.apple.com:2195' // Sandbox environment
@@ -44,7 +45,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 
 	/**
 	 * Set the send retry times value.
-	 * 
+	 *
 	 * If the client is unable to send a payload to to the server retries at least
 	 * for this value. The default send retry times is 3.
 	 *
@@ -74,8 +75,8 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	{
 		$sMessagePayload = $message->getPayload();
 		$nRecipients = $message->getRecipientsNumber();
-		
-		for ($i = 0; $i < $nRecipients; $i++) { 
+
+		for ($i = 0; $i < $nRecipients; $i++) {
 			$this->_aMessageQueue[] = array(
 				'MESSAGE' => $message,
 				'BINARY_NOTIFICATION' => $this->_getBinaryNotification(
@@ -119,9 +120,9 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 						"{$aMessage['RETRY_TIMES']}/" . $this->_nSendRetryTimes . ')...'
 					);
 				}
-				
+
 				$aMessage['RETRY_TIMES']++;
-				
+
 				$nLen = strlen($aMessage['BINARY_NOTIFICATION']);
 				if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, $aMessage['BINARY_NOTIFICATION']))) {
 					$this->_log("ERROR: Unable to send message. Written {$nWritten} bytes instead of {$nLen} bytes");
@@ -154,7 +155,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 
 	/**
 	 * Returns all messages in the message queue.
-	 * 
+	 *
 	 * When a message is successful sent is removed from the message queue.
 	 * Getting the message queue after a send operation is useful to know which
 	 * messages are not delivered to the end user.
@@ -173,7 +174,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 
 	/**
 	 * Generate a binary notification from a device token and a JSON-encoded payload.
-	 * 
+	 *
 	 * @see http://tinyurl.com/ApplePushNotificationBinary
 	 *
 	 * @param  $sDeviceToken @type string The device token.
@@ -188,7 +189,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		$sRet  = pack('CnH*', self::COMMAND_PUSH, self::DEVICE_BINARY_SIZE, $sDeviceToken);
 		$sRet .= pack('n', $nPayloadLength);
 		$sRet .= $sPayload;
-		
+
 		return $sRet;
 	}
 }

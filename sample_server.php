@@ -2,9 +2,9 @@
 /**
  * @file
  * sample_server.php
- * 
+ *
  * Push server demo
- * 
+ *
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
@@ -14,7 +14,8 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to aldo.armiento@gmail.com so we can send you a copy immediately.
- * 
+ *
+ * @author (C) 2010 Aldo Armiento (aldo.armiento@gmail.com)
  * @version $Id$
  */
 
@@ -45,14 +46,14 @@ $server->start();
 // Main loop...
 $i = 1;
 while ($server->run()) {
-	
+
 	// Check the error queue
 	$aErrorQueue = $server->getQueue();
 	if (!empty($aErrorQueue)) {
 		// Do somethings with this error messages...
 		var_dump($aErrorQueue);
 	}
-	
+
 	// Send 10 messages
 	if ($i <= 10) {
 		// Instantiate a new Message with a single recipient
@@ -60,13 +61,13 @@ while ($server->run()) {
 
 		// Set badge icon to "i"
 		$message->setBadge($i);
-		
+
 		// Add the message to the message queue
 		$server->add($message);
-		
+
 		$i++;
 	}
-	
+
 	// Sleep a little...
 	usleep(200000);
 }

@@ -2,7 +2,7 @@
 /**
  * @file
  * ApnsPHP_Push_Server class definition.
- * 
+ *
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
@@ -12,7 +12,8 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to aldo.armiento@gmail.com so we can send you a copy immediately.
- * 
+ *
+ * @author (C) 2010 Aldo Armiento (aldo.armiento@gmail.com)
  * @version $Id$
  */
 
@@ -23,26 +24,26 @@
 
 /**
  * The Push Notification Server Provider.
- * 
+ *
  * The class manages multiple Push Notification Providers and an inter-process message
  * queue. This class is useful to parallelize and speed-up send activities to Apple
  * Push Notification service.
- * 
+ *
  * @ingroup ApnsPHP_Push_Server
- */ 
+ */
 class ApnsPHP_Push_Server extends ApnsPHP_Push
 {
 	const MAIN_LOOP_USLEEP = 200000; /**< @type integer Main loop sleep time in micro seconds. */
 	const SHM_SIZE = 524288; /**< @type integer Shared memory size in bytes useful to store message queues. */
 	const SHM_MESSAGES_QUEUE_KEY_START = 1000; /**< @type integer Message queue start identifier for messages. For every process 1 is added to this number. */
 	const SHM_ERROR_MESSAGES_QUEUE_KEY = 999; /**< @type integer Message queue identifier for not delivered messages. */
-	
+
 	protected $_nProcesses = 3; /**< @type integer The number of processes to start. */
 	protected $_aPids = array(); /**< @type array Array of process PIDs. */
 	protected $_nParentPid; /**< @type integer The parent process id. */
 	protected $_nCurrentProcess; /**< @type integer Cardinal process number (0, 1, 2, ...). */
 	protected $_nRunningProcesses; /**< @type integer The number of running processes. */
-	
+
 	protected $_hShm; /**< @type resource Shared memory. */
 	protected $_hSem; /**< @type resource Semaphore. */
 
@@ -58,7 +59,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	public function __construct($nEnvironment, $sProviderCertificateFile)
 	{
 		parent::__construct($nEnvironment, $sProviderCertificateFile);
-		
+
 		$this->_nParentPid = posix_getpid();
 		$this->_hShm = shm_attach(mt_rand(), self::SHM_SIZE);
 		if ($this->_hShm === false) {
@@ -66,14 +67,14 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 				'Unable to get shared memory segment'
 			);
 		}
-		
+
 		$this->_hSem = sem_get(mt_rand());
 		if ($this->_hSem === false) {
 			throw new ApnsPHP_Push_Server_Exception(
 				'Unable to get semaphore id'
 			);
 		}
-		
+
 		register_shutdown_function(array($this, 'onShutdown'));
 
 		pcntl_signal(SIGCHLD, array($this, 'onChildExited'));
@@ -84,7 +85,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 
 	/**
 	 * Checks if the server is running and calls signal handlers for pending signals.
-	 * 
+	 *
 	 * Example:
 	 * @code
 	 * while ($Server->run()) {
@@ -138,7 +139,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 
 	/**
 	 * When the parent process exits, cleans shared memory and semaphore.
-	 * 
+	 *
 	 * This is called using 'register_shutdown_function' pattern.
 	 * @see http://php.net/register_shutdown_function
 	 */
@@ -164,10 +165,10 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 		}
 		$this->_nProcesses = $nProcesses;
 	}
-	
+
 	/**
 	 * Starts the server forking all processes and return immediately.
-	 * 
+	 *
 	 * Every forked process is connected to Apple Push Notification Service on start
 	 * and enter on the main loop.
 	 */
@@ -196,10 +197,10 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a message to the inter-process message queue.
-	 * 
+	 *
 	 * Messages are added to the queues in a round-robin fashion starting from the
 	 * first process to the last.
 	 *
@@ -221,7 +222,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 
 	/**
 	 * Returns the error message queue.
-	 * 
+	 *
 	 * Error message queue contains all messages not delivered to the end user by
 	 * all of the server processes.
 	 *
@@ -241,7 +242,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 
 	/**
 	 * The process main loop.
-	 * 
+	 *
 	 * During the main loop: the per-process error queue is read and the common error message
 	 * queue is populated; the per-process message queue is spooled (message from
 	 * this queue is added to ApnsPHP_Push queue and delivered).
@@ -257,7 +258,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 			}
 
 			sem_acquire($this->_hSem);
-			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0, 
+			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0,
 				array_merge($this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY), parent::getQueue())
 			);
 
@@ -277,7 +278,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the queue from the shared memory.
 	 *
@@ -293,7 +294,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 		}
 		return shm_get_var($this->_hShm, $nQueueKey + $nProcess);
 	}
-	
+
 	/**
 	 * Store the queue into the shared memory.
 	 *

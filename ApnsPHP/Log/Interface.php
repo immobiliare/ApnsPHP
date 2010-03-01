@@ -2,7 +2,7 @@
 /**
  * @file
  * ApnsPHP_Log_Interface interface definition.
- * 
+ *
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
@@ -12,7 +12,8 @@
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to aldo.armiento@gmail.com so we can send you a copy immediately.
- * 
+ *
+ * @author (C) 2010 Aldo Armiento (aldo.armiento@gmail.com)
  * @version $Id$
  */
 
@@ -23,12 +24,12 @@
 
 /**
  * The Log Interface.
- * 
+ *
  * Implement the Log Interface and pass the object instance to all
  * ApnsPHP_Abstract based class to use a custom log.
- * 
+ *
  * @ingroup ApnsPHP_Log
- */ 
+ */
 interface ApnsPHP_Log_Interface
 {
 	/**
