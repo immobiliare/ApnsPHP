@@ -221,15 +221,38 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	}
 
 	/**
-	 * Returns the error message queue.
+	 * Returns messages in the message queue.
 	 *
-	 * Error message queue contains all messages not delivered to the end user by
-	 * all of the server processes.
+	 * When a message is successful sent or reached the maximum retry time is removed
+	 * from the message queue and inserted in the Errors container. Use the getErrors()
+	 * method to retrive messages with delivery error(s).
 	 *
 	 * @param  $bEmpty @type boolean @optional Empty message queue.
-	 * @return @type array Array of messages not delivered to the end user.
+	 * @return @type array Array of messages left on the queue.
 	 */
 	public function getQueue($bEmpty = true)
+	{
+		$aRet = array();
+		sem_acquire($this->_hSem);
+		for ($i = 0; $i < $this->_nProcesses; $i++) {
+			$aRet = array_merge($aRet, $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i));
+			if ($bEmpty) {
+				$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i);
+			}
+		}
+		sem_release($this->_hSem);
+		return $aRet;
+	}
+
+	/**
+	 * Returns messages not delivered to the end user because one (or more) error
+	 * occurred.
+	 *
+	 * @param  $bEmpty @type boolean @optional Empty message container.
+	 * @return @type array Array of messages not delivered because one or more errors
+	 *         occurred.
+	 */
+	public function getErrors($bEmpty = true)
 	{
 		sem_acquire($this->_hSem);
 		$aRet = $this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY);
@@ -244,7 +267,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 * The process main loop.
 	 *
 	 * During the main loop: the per-process error queue is read and the common error message
-	 * queue is populated; the per-process message queue is spooled (message from
+	 * container is populated; the per-process message queue is spooled (message from
 	 * this queue is added to ApnsPHP_Push queue and delivered).
 	 */
 	protected function _mainLoop()
@@ -259,7 +282,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 
 			sem_acquire($this->_hSem);
 			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0,
-				array_merge($this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY), parent::getQueue())
+				array_merge($this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY), parent::getErrors())
 			);
 
 			$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);

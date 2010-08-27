@@ -48,7 +48,7 @@ $i = 1;
 while ($server->run()) {
 
 	// Check the error queue
-	$aErrorQueue = $server->getQueue();
+	$aErrorQueue = $server->getErrors();
 	if (!empty($aErrorQueue)) {
 		// Do somethings with this error messages...
 		var_dump($aErrorQueue);
@@ -57,7 +57,7 @@ while ($server->run()) {
 	// Send 10 messages
 	if ($i <= 10) {
 		// Instantiate a new Message with a single recipient
-		$message = new ApnsPHP_Message('e3434b98811836079119bbb8617373073292d045dc195e87de5765ebae5e50d7');
+		$message = new ApnsPHP_Message('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 
 		// Set badge icon to "i"
 		$message->setBadge($i);
