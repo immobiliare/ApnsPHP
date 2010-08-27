@@ -46,6 +46,8 @@ class ApnsPHP_Message
 	protected $_sCustomPropertyName; /**< @type string Custom property name. */
 	protected $_mCustomPropertyValue; /**< @type mixed Custom property value. */
 
+	protected $_nExpiryValue = 604800; /**< @type integer That message will expire in 604800 seconds (86400 * 7, 7 days) if not successful delivered. */
+
 	/**
 	 * Constructor.
 	 *
@@ -306,5 +308,31 @@ class ApnsPHP_Message
 		}
 
 		return $sJSONPayload;
+	}
+	
+	/**
+	 * Set the expiry value.
+	 *
+	 * @param  $nExpiryValue @type integer This message will expire in N seconds
+	 *         if not successful delivered.
+	 */
+	public function setExpiry($nExpiryValue)
+	{
+		if (!is_int($nExpiryValue)) {
+			throw new ApnsPHP_Message_Exception(
+				"Invalid seconds number '{$nExpiryValue}'"
+			);
+		}
+		$this->_nExpiryValue = $nExpiryValue;
+	}
+	
+	/**
+	 * Get the expiry value.
+	 *
+	 * @return @type integer The expire message value (in seconds).
+	 */
+	public function getExpiry()
+	{
+		return $this->_nExpiryValue;
 	}
 }

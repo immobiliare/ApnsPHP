@@ -45,7 +45,7 @@ abstract class ApnsPHP_Abstract
 	const DEVICE_BINARY_SIZE = 32; /**< @type integer Device token length. */
 
 	const CONNECT_RETRY_INTERVAL = 1000000; /**< @type integer Default connect retry interval in micro seconds. */
-	const SOCKET_SELECT_TIMEOUT = 500000; /**< @type integer Default socket select timeout in micro seconds. */
+	const SOCKET_SELECT_TIMEOUT = 1000000; /**< @type integer Default socket select timeout in micro seconds. */
 
 	protected $_aServiceURLs = array(); /**< @type array Container for service URLs environments. */
 

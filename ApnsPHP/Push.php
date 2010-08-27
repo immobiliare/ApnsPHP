@@ -32,16 +32,32 @@
  */
 class ApnsPHP_Push extends ApnsPHP_Abstract
 {
-	const COMMAND_PUSH = 0; /**< @type integer Payload command. */
+	const COMMAND_PUSH = 1; /**< @type integer Payload command. */
+
+	const ERROR_RESPONSE_SIZE = 6; /**< @type integer Error-response packet size. */
+	const ERROR_RESPONSE_COMMAND = 8; /**< @type integer Error-response command code. */
+
+	protected $_aErrorResponseMessages = array(
+		0   => 'No errors encountered',
+		1   => 'Processing error',
+		2   => 'Missing device token',
+		3   => 'Missing topic',
+		4   => 'Missing payload',
+		5   => 'Invalid token size',
+		6   => 'Invalid topic size',
+		7   => 'Invalid payload size',
+		8   => 'Invalid token'
+	); /**< @type array Error-response messages. */
 
 	protected $_nSendRetryTimes = 3; /**< @type integer Send retry times. */
 
 	protected $_aServiceURLs = array(
 		'ssl://gateway.push.apple.com:2195', // Production environment
 		'ssl://gateway.sandbox.push.apple.com:2195' // Sandbox environment
-	); /**< @type string Service URLs environments. */
+	); /**< @type array Service URLs environments. */
 
 	protected $_aMessageQueue = array(); /**< @type array Message queue. */
+	protected $_aErrors = array(); /**< @type array Error container. */
 
 	/**
 	 * Set the send retry times value.
@@ -76,14 +92,18 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		$sMessagePayload = $message->getPayload();
 		$nRecipients = $message->getRecipientsNumber();
 
+		$nMessageQueueLen = count($this->_aMessageQueue);
 		for ($i = 0; $i < $nRecipients; $i++) {
-			$this->_aMessageQueue[] = array(
+			$nMessageID = $nMessageQueueLen + $i + 1;
+			$this->_aMessageQueue[$nMessageID] = array(
 				'MESSAGE' => $message,
 				'BINARY_NOTIFICATION' => $this->_getBinaryNotification(
 					$message->getRecipient($i),
-					$sMessagePayload
+					$sMessagePayload,
+					$nMessageID,
+					$message->getExpiry()
 				),
-				'RETRY_TIMES' => 0
+				'ERRORS' => array()
 			);
 		}
 	}
@@ -108,57 +128,77 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 			);
 		}
 
-		foreach($this->_aMessageQueue as $k => &$aMessage) {
-			$bSuccessfulSent = false;
-			while ($bSuccessfulSent == false && $aMessage['RETRY_TIMES'] <= $this->_nSendRetryTimes) {
+		$this->_aErrors = array();
+		$nRun = 1;
+		while (($nMessages = count($this->_aMessageQueue)) > 0) {
+			$this->_log("INFO: Sending messages queue, run #{$nRun}: $nMessages message(s) left in queue.");
+
+			$bError = false;
+			foreach($this->_aMessageQueue as $k => &$aMessage) {
 				if (function_exists('pcntl_signal_dispatch')) {
 					pcntl_signal_dispatch();
 				}
-				if ($aMessage['RETRY_TIMES'] > 0) {
-					$this->_log(
-						'INFO: Retrying to send message ' . ($k+1) . " (" .
-						"{$aMessage['RETRY_TIMES']}/" . $this->_nSendRetryTimes . ')...'
-					);
-				}
 
-				$aMessage['RETRY_TIMES']++;
+				if (!empty($aMessage['ERRORS'])) {
+					foreach($aMessage['ERRORS'] as $aError) {
+						if ($aError['statusCode'] == 0) {
+							$this->_log("INFO: Message ID {$k} has no error ({$aError['statusCode']}), removing from queue...");
+							$this->_removeMessageFromQueue($k);
+							continue 2;
+						} else if ($aError['statusCode'] > 1 && $aError['statusCode'] <= 8) {
+							$this->_log("WARNING: Message ID {$k} has an unrecoverable error ({$aError['statusCode']}), removing from queue without retrying...");
+							$this->_removeMessageFromQueue($k, true);
+							continue 2;
+						}
+					}
+					if ($nErrors = count($aMessage['ERRORS']) > $this->_nSendRetryTimes) {
+						$this->_log(
+							"WARNING: Message ID {$k} has too many errors ($nErrors/{$this->_nSendRetryTimes}), removing from queue..."
+						);
+						$this->_removeMessageFromQueue($k, true);
+						continue;
+					}
+				}
 
 				$nLen = strlen($aMessage['BINARY_NOTIFICATION']);
+				$this->_log("STATUS: Sending message ID {$k}: {$nLen} bytes.");
 				if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, $aMessage['BINARY_NOTIFICATION']))) {
-					$this->_log("ERROR: Unable to send message. Written {$nWritten} bytes instead of {$nLen} bytes");
-					continue;
+					$this->_log("WARNING: Unable to send message ID {$k}. Written {$nWritten} bytes instead of {$nLen} bytes");
 				}
 
-				$bSuccessfulSent = true;
+				$bError = $this->_updateQueue();
+				if ($bError) {
+					break;
+				}
+			}
 
+			if (!$bError) {
 				$read = array($this->_hSocket);
 				$null = NULL;
 				$nChangedStreams = @stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
 				if ($nChangedStreams === false) {
-					$this->_log('WARNING: Unable to wait for a stream availability.');
+					$this->_log('ERROR: Unable to wait for a stream availability.');
+					break;
 				} else if ($nChangedStreams > 0) {
-					if (feof($this->_hSocket)) {
-						$bSuccessfulSent = false;
-						$this->_log('ERROR: Unable to send message ' . ($k+1) . ', stream could be no more connected.');
-						$this->disconnect();
-						$this->connect();
+					$bError = $this->_updateQueue();
+					if (!$bError) {
+						$this->_aMessageQueue = array();
 					}
+				} else {
+					$this->_aMessageQueue = array();
 				}
 			}
 
-			if ($bSuccessfulSent) {
-				$this->_log('INFO: Message ' . ($k+1) . ' sent.');
-				unset($this->_aMessageQueue[$k]);
-			}
+			$nRun++;
 		}
 	}
 
 	/**
-	 * Returns all messages in the message queue.
+	 * Returns messages in the message queue.
 	 *
-	 * When a message is successful sent is removed from the message queue.
-	 * Getting the message queue after a send operation is useful to know which
-	 * messages are not delivered to the end user.
+	 * When a message is successful sent or reached the maximum retry time is removed
+	 * from the message queue and inserted in the Errors container. Use the getErrors()
+	 * method to retrive messages with delivery error(s).
 	 *
 	 * @param  $bEmpty @type boolean @optional Empty message queue.
 	 * @return @type array Array of messages left on the queue.
@@ -173,23 +213,145 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	}
 
 	/**
+	 * Returns messages not delivered to the end user because one (or more) error
+	 * occurred.
+	 *
+	 * @param  $bEmpty @type boolean @optional Empty message container.
+	 * @return @type array Array of messages not delivered because one or more errors
+	 *         occurred.
+	 */
+	public function getErrors($bEmpty = true)
+	{
+		$aRet = $this->_aErrors;
+		if ($bEmpty) {
+			$this->_aErrors = array();
+		}
+		return $aRet;
+	}
+
+	/**
 	 * Generate a binary notification from a device token and a JSON-encoded payload.
 	 *
 	 * @see http://tinyurl.com/ApplePushNotificationBinary
 	 *
 	 * @param  $sDeviceToken @type string The device token.
 	 * @param  $sPayload @type string The JSON-encoded payload.
+	 * @param  $nMessageID @type integer @optional Message unique ID.
+	 * @param  $nExpire @type integer @optional Seconds, starting from now, that
+	 *         identifies when the notification is no longer valid and can be discarded.
+	 *         Default is 86400 * 7, 7 days.
 	 * @return @type string A binary notification.
 	 */
-	protected function _getBinaryNotification($sDeviceToken, $sPayload)
+	protected function _getBinaryNotification($sDeviceToken, $sPayload, $nMessageID = 0, $nExpire = 604800)
 	{
 		$nTokenLength = strlen($sDeviceToken);
 		$nPayloadLength = strlen($sPayload);
 
-		$sRet  = pack('CnH*', self::COMMAND_PUSH, self::DEVICE_BINARY_SIZE, $sDeviceToken);
+		$sRet  = pack('CNNnH*', self::COMMAND_PUSH, $nMessageID, time() + $nExpire, self::DEVICE_BINARY_SIZE, $sDeviceToken);
 		$sRet .= pack('n', $nPayloadLength);
 		$sRet .= $sPayload;
 
 		return $sRet;
+	}
+
+	/**
+	 * Parses the error message.
+	 *
+	 * @param  $sErrorMessage @type string The Error Message.
+	 * @return @type array Array with command, statusCode and identifier keys.
+	 */
+	protected function _parseErrorMessage($sErrorMessage)
+	{
+		return unpack('Ccommand/CstatusCode/Nidentifier', $sErrorMessage);
+	}
+
+	/**
+	 * Reads and error message (if present) from the main stream.
+	 * If the error message is present and valid the error message is returned,
+	 * otherwhise null is returned.
+	 *
+	 * @return @type array|null Return the error message array.
+	 */
+	protected function _readErrorMessage()
+	{
+		$sErrorResponse = @fread($this->_hSocket, self::ERROR_RESPONSE_SIZE);
+		if ($sErrorResponse === false || strlen($sErrorResponse) != self::ERROR_RESPONSE_SIZE) {
+			return;
+		}
+		$aErrorResponse = $this->_parseErrorMessage($sErrorResponse);
+		if (!is_array($aErrorResponse) || empty($aErrorResponse)) {
+			return;
+		}
+		if (!isset($aErrorResponse['command'], $aErrorResponse['statusCode'], $aErrorResponse['identifier'])) {
+			return;
+		}
+		if ($aErrorResponse['command'] != self::ERROR_RESPONSE_COMMAND) {
+			return;
+		}
+		$aErrorResponse['time'] = time();
+		$aErrorResponse['statusMessage'] = 'None (unknown)';
+		if (isset($this->_aErrorResponseMessages[$aErrorResponse['statusCode']])) {
+			$aErrorResponse['statusMessage'] = $this->_aErrorResponseMessages[$aErrorResponse['statusCode']];
+		}
+		return $aErrorResponse;
+	}
+
+	/**
+	 * Checks for error message and deletes messages successfully sent from message queue .
+	 *
+	 * @return @type boolean True if an error was received.
+	 */
+	protected function _updateQueue()
+	{
+		$aErrorMessage = $this->_readErrorMessage();
+		if (!isset($aErrorMessage)) {
+			return false;
+		}
+
+		$this->_log('ERROR: Unable to send message ID ' .
+			$aErrorMessage['identifier'] . ': ' .
+			$aErrorMessage['statusMessage'] . ' (' . $aErrorMessage['statusCode'] . ').');
+
+		$this->disconnect();
+
+		foreach($this->_aMessageQueue as $k => &$aMessage) {
+			if ($k < $aErrorMessage['identifier']) {
+				unset($this->_aMessageQueue[$k]);
+			} else if ($k == $aErrorMessage['identifier']) {
+				$aMessage['ERRORS'][] = $aErrorMessage;
+			} else {
+				break;
+			}
+		}
+
+		$this->connect();
+
+		return true;
+	}
+	
+	/**
+	 * Remove a message from the message queue.
+	 *
+	 * @param  $nMessageID @type integer The Message ID.
+	 * @param  $bError @type boolean @optional Insert the message in the Error container.
+	 * @throws ApnsPHP_Push_Exception if the Message ID is not valid or message
+	 *         does not exists.
+	 */
+	protected function _removeMessageFromQueue($nMessageID, $bError = false)
+	{
+		if (!is_numeric($nMessageID) || $nMessageID <= 0) {
+			throw new ApnsPHP_Push_Exception(
+				'Message ID format is not valid.'
+			);
+		}
+		if (!isset($this->_aMessageQueue[$nMessageID])) {
+			throw new ApnsPHP_Push_Exception(
+				"The Message ID {$nMessageID} does not exists."
+			);
+		}
+		if ($bError) {
+			$this->_aErrors[$nMessageID] = $this->_aMessageQueue[$nMessageID];
+		}
+		unset($this->_aMessageQueue[$nMessageID]);
 	}
 }

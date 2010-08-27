@@ -41,7 +41,7 @@ $push->setRootCertificationAuthority('entrust_root_certification_authority.pem')
 $push->connect();
 
 // Instantiate a new Message with a single recipient
-$message = new ApnsPHP_Message('e3434b98811836079119bbb8617373073292d045dc195e87de5765ebae5e50d7');
+$message = new ApnsPHP_Message('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 
 // Set badge icon to "3"
 $message->setBadge(3);
@@ -55,6 +55,9 @@ $message->setSound();
 // Set a custom property
 $message->setCustomProperty('acme2', array('bang', 'whiz'));
 
+// Set the expiry value to 30 seconds
+$message->setExpiry(30);
+
 // Add the message to the message queue
 $push->add($message);
 
@@ -64,8 +67,8 @@ $push->send();
 // Disconnect from the Apple Push Notification Service
 $push->disconnect();
 
-// Examine the error message queue
-$aErrorQueue = $push->getQueue();
+// Examine the error message container
+$aErrorQueue = $push->getErrors();
 if (!empty($aErrorQueue)) {
 	var_dump($aErrorQueue);
 }
