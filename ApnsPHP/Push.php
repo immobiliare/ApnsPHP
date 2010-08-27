@@ -139,21 +139,25 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 					pcntl_signal_dispatch();
 				}
 
+				$message = $aMessage['MESSAGE'];
+				$sCustomIdentifier = (string)$message->getCustomIdentifier();
+				$sCustomIdentifier = sprintf('[custom identifier: %s]', empty($sCustomIdentifier) ? 'unset' : $sCustomIdentifier);
+
 				if (!empty($aMessage['ERRORS'])) {
 					foreach($aMessage['ERRORS'] as $aError) {
 						if ($aError['statusCode'] == 0) {
-							$this->_log("INFO: Message ID {$k} has no error ({$aError['statusCode']}), removing from queue...");
+							$this->_log("INFO: Message ID {$k} {$sCustomIdentifier} has no error ({$aError['statusCode']}), removing from queue...");
 							$this->_removeMessageFromQueue($k);
 							continue 2;
 						} else if ($aError['statusCode'] > 1 && $aError['statusCode'] <= 8) {
-							$this->_log("WARNING: Message ID {$k} has an unrecoverable error ({$aError['statusCode']}), removing from queue without retrying...");
+							$this->_log("WARNING: Message ID {$k} {$sCustomIdentifier} has an unrecoverable error ({$aError['statusCode']}), removing from queue without retrying...");
 							$this->_removeMessageFromQueue($k, true);
 							continue 2;
 						}
 					}
 					if ($nErrors = count($aMessage['ERRORS']) > $this->_nSendRetryTimes) {
 						$this->_log(
-							"WARNING: Message ID {$k} has too many errors ($nErrors/{$this->_nSendRetryTimes}), removing from queue..."
+							"WARNING: Message ID {$k} {$sCustomIdentifier} has too many errors ($nErrors/{$this->_nSendRetryTimes}), removing from queue..."
 						);
 						$this->_removeMessageFromQueue($k, true);
 						continue;
@@ -161,9 +165,9 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 				}
 
 				$nLen = strlen($aMessage['BINARY_NOTIFICATION']);
-				$this->_log("STATUS: Sending message ID {$k}: {$nLen} bytes.");
+				$this->_log("STATUS: Sending message ID {$k} {$sCustomIdentifier}: {$nLen} bytes.");
 				if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, $aMessage['BINARY_NOTIFICATION']))) {
-					$this->_log("WARNING: Unable to send message ID {$k}. Written {$nWritten} bytes instead of {$nLen} bytes");
+					$this->_log("WARNING: Unable to send message ID {$k} {$sCustomIdentifier}. Written {$nWritten} bytes instead of {$nLen} bytes");
 				}
 
 				$bError = $this->_updateQueue();
@@ -328,7 +332,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 
 		return true;
 	}
-	
+
 	/**
 	 * Remove a message from the message queue.
 	 *

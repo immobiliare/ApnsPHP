@@ -43,6 +43,10 @@ $push->connect();
 // Instantiate a new Message with a single recipient
 $message = new ApnsPHP_Message('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 
+// Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
+// over a ApnsPHP_Message object retrieved with the getErrors() message.
+$message->setCustomIdentifier("Message-Badge-3");
+
 // Set badge icon to "3"
 $message->setBadge(3);
 

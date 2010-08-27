@@ -48,6 +48,8 @@ class ApnsPHP_Message
 
 	protected $_nExpiryValue = 604800; /**< @type integer That message will expire in 604800 seconds (86400 * 7, 7 days) if not successful delivered. */
 
+	protected $_mCustomIdentifier; /**< @type mixed Custom message identifier. */
+
 	/**
 	 * Constructor.
 	 *
@@ -309,7 +311,7 @@ class ApnsPHP_Message
 
 		return $sJSONPayload;
 	}
-	
+
 	/**
 	 * Set the expiry value.
 	 *
@@ -325,7 +327,7 @@ class ApnsPHP_Message
 		}
 		$this->_nExpiryValue = $nExpiryValue;
 	}
-	
+
 	/**
 	 * Get the expiry value.
 	 *
@@ -334,5 +336,32 @@ class ApnsPHP_Message
 	public function getExpiry()
 	{
 		return $this->_nExpiryValue;
+	}
+
+	/**
+	 * Set the custom message identifier.
+	 *
+	 * The custom message identifier is useful to associate a push notification
+	 * to a DB record or an User entry for example. The custom message identifier
+	 * can be retrieved in case of error using the getCustomIdentifier()
+	 * method of an entry retrieved by the getErrors() method.
+	 * This custom identifier, if present, is also used in all status message by
+	 * the ApnsPHP_Push class.
+	 *
+	 * @param  $mCustomIdentifier @type mixed The custom message identifier.
+	 */
+	public function setCustomIdentifier($mCustomIdentifier)
+	{
+		$this->_mCustomIdentifier = $mCustomIdentifier;
+	}
+
+	/**
+	 * Get the custom message identifier.
+	 *
+	 * @return @type mixed The custom message identifier.
+	 */
+	public function getCustomIdentifier()
+	{
+		return $this->_mCustomIdentifier;
 	}
 }
