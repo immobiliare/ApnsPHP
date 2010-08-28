@@ -243,7 +243,8 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 * @param  $nMessageID @type integer @optional Message unique ID.
 	 * @param  $nExpire @type integer @optional Seconds, starting from now, that
 	 *         identifies when the notification is no longer valid and can be discarded.
-	 *         Default is 86400 * 7, 7 days.
+	 *         Pass a negative value (-1 for example) to request that APNs not store
+	 *         the notification at all. Default is 86400 * 7, 7 days.
 	 * @return @type string A binary notification.
 	 */
 	protected function _getBinaryNotification($sDeviceToken, $sPayload, $nMessageID = 0, $nExpire = 604800)
@@ -251,7 +252,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		$nTokenLength = strlen($sDeviceToken);
 		$nPayloadLength = strlen($sPayload);
 
-		$sRet  = pack('CNNnH*', self::COMMAND_PUSH, $nMessageID, time() + $nExpire, self::DEVICE_BINARY_SIZE, $sDeviceToken);
+		$sRet  = pack('CNNnH*', self::COMMAND_PUSH, $nMessageID, $nExpire > 0 ? time() + $nExpire : 0, self::DEVICE_BINARY_SIZE, $sDeviceToken);
 		$sRet .= pack('n', $nPayloadLength);
 		$sRet .= $sPayload;
 
