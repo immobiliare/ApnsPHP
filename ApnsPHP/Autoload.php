@@ -24,12 +24,13 @@
  * fails with an error.
  *
  * @see http://php.net/__autoload
+ * @see http://php.net/spl_autoload_register
  *
  * @param  $sClassName @type string The class name.
  * @throws Exception if class name is empty, the current path is empty or class
  *         file does not exists or file was loaded but class name was not found.
  */
-function __autoload($sClassName)
+function ApnsPHP_Autoload($sClassName)
 {
 	if (empty($sClassName)) {
 		throw new Exception('Class name is empty');
@@ -54,3 +55,10 @@ function __autoload($sClassName)
 		throw new Exception("File '{$sFile}' was loaded but class '{$sClassName}' was not found in file");
 	}
 }
+
+// If your code has an existing __autoload function then this function must be explicitly registered on the __autoload stack.
+// (PHP Documentation for spl_autoload_register [@see http://php.net/spl_autoload_register])
+if (function_exists('__autoload')) {
+	spl_autoload_register('__autoload');
+}
+spl_autoload_register('ApnsPHP_Autoload');
