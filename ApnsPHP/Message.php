@@ -205,7 +205,7 @@ class ApnsPHP_Message
 	/**
 	 * Get the first custom property name.
 	 *
-	 * @deprecated Use 'getCustomPropertyNames' instead.
+	 * @deprecated Use getCustomPropertyNames() instead.
 	 *
 	 * @return @type string The first custom property name.
 	 */
@@ -221,7 +221,7 @@ class ApnsPHP_Message
 	/**
 	 * Get the first custom property value.
 	 *
-	 * @deprecated Use 'getCustomProperty' instead.
+	 * @deprecated Use getCustomProperty() instead.
 	 *
 	 * @return @type mixed The first custom property value.
 	 */
@@ -251,7 +251,8 @@ class ApnsPHP_Message
 	 * Get the custom property value.
 	 *
 	 * @param  $sName @type string Custom property name.
-	 * @throws Exception if no property exists with the specified name.
+	 * @throws ApnsPHP_Message_Exception if no property exists with the specified
+	 *         name.
 	 * @return @type string The custom property value.
 	 */
 	public function getCustomProperty($sName)
