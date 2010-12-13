@@ -43,8 +43,7 @@ class ApnsPHP_Message
 	protected $_nBadge; /**< @type integer Number to badge the application icon with. */
 	protected $_sSound; /**< @type string Sound to play. */
 
-	protected $_sCustomPropertyName; /**< @type string Custom property name. */
-	protected $_mCustomPropertyValue; /**< @type mixed Custom property value. */
+	protected $_aCustomProperties; /**< @type mixed Custom properties container. */
 
 	protected $_nExpiryValue = 604800; /**< @type integer That message will expire in 604800 seconds (86400 * 7, 7 days) if not successful delivered. */
 
@@ -200,28 +199,69 @@ class ApnsPHP_Message
 				"Property name 'aps' can not be used for custom property."
 			);
 		}
-		$this->_sCustomPropertyName = trim($sName);
-		$this->_mCustomPropertyValue = $mValue;
+		$this->_aCustomProperties[trim($sName)] = $mValue;
 	}
 
 	/**
-	 * Get the custom property name.
+	 * Get the first custom property name.
 	 *
-	 * @return @type string The custom property name.
+	 * @deprecated Use 'getCustomPropertyNames' instead.
+	 *
+	 * @return @type string The first custom property name.
 	 */
 	public function getCustomPropertyName()
 	{
-		return $this->_sCustomPropertyName;
+		if (!is_array($this->_aCustomProperties)) {
+			return;
+		}
+		$aKeys = array_keys($this->_aCustomProperties);
+		return $aKeys[0];
+	}
+
+	/**
+	 * Get the first custom property value.
+	 *
+	 * @deprecated Use 'getCustomProperty' instead.
+	 *
+	 * @return @type mixed The first custom property value.
+	 */
+	public function getCustomPropertyValue()
+	{
+		if (!is_array($this->_aCustomProperties)) {
+			return;
+		}
+		$aKeys = array_keys($this->_aCustomProperties);
+		return $this->_aCustomProperties[$aKeys[0]];
+	}
+
+	/**
+	 * Get all custom properties names.
+	 *
+	 * @return @type array All properties names.
+	 */
+	public function getCustomPropertyNames()
+	{
+		if (!is_array($this->_aCustomProperties)) {
+			return array();
+		}
+		return array_keys($this->_aCustomProperties);
 	}
 
 	/**
 	 * Get the custom property value.
 	 *
-	 * @return @type mixed The custom property value.
+	 * @param  $sName @type string Custom property name.
+	 * @throws Exception if no property exists with the specified name.
+	 * @return @type string The custom property value.
 	 */
-	public function getCustomPropertyValue()
+	public function getCustomProperty($sName)
 	{
-		return $this->_mCustomPropertyValue;
+		if (!array_key_exists($sName, $this->_aCustomProperties)) {
+			throw new ApnsPHP_Message_Exception(
+				"No property exists with the specified name '{$sName}'."
+			);
+		}
+		return $this->_aCustomProperties[$sName];
 	}
 
 	/**
@@ -282,8 +322,10 @@ class ApnsPHP_Message
 			$aPayload['aps']['sound'] = (string)$this->_sSound;
 		}
 
-		if (isset($this->_sCustomPropertyName, $this->_mCustomPropertyValue)) {
-			$aPayload[$this->_sCustomPropertyName] = $this->_mCustomPropertyValue;
+		if (is_array($this->_aCustomProperties)) {
+			foreach($this->_aCustomProperties as $sPropertyName => $mPropertyValue) {
+				$aPayload[$sPropertyName] = $mPropertyValue;
+			}
 		}
 
 		$sJSONPayload = json_encode($aPayload, JSON_FORCE_OBJECT);

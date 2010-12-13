@@ -59,6 +59,9 @@ $message->setSound();
 // Set a custom property
 $message->setCustomProperty('acme2', array('bang', 'whiz'));
 
+// Set another custom property
+$message->setCustomProperty('acme3', array('bing', 'bong'));
+
 // Set the expiry value to 30 seconds
 $message->setExpiry(30);
 
