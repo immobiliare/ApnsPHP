@@ -34,10 +34,30 @@
 #endif
   
   application.applicationIconBadgeNumber = 0;
-  
   self.textView.text = [launchOptions description];
   
   return YES;
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+  application.applicationIconBadgeNumber = 0;
+  self.textView.text = [userInfo description];
+  
+  // We can determine whether an application is launched as a result of the user tapping the action
+  // button or whether the notification was delivered to the already-running application by examining
+  // the application state.
+  
+  if (application.applicationState == UIApplicationStateActive) {
+    // Nothing to do if applicationState is Inactive, the iOS already displayed an alert view.
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Did receive a Remote Notification"
+                                                        message:[NSString stringWithFormat:@"The application received this remote notification while it was running:\n%@",
+                                                                 [[userInfo objectForKey:@"aps"] objectForKey:@"alert"]]
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+  }
 }
 
 #pragma mark -
