@@ -34,6 +34,7 @@
 class ApnsPHP_Message
 {
 	const PAYLOAD_MAXIMUM_SIZE = 256; /**< @type integer The maximum size allowed for a notification payload. */
+	const APPLE_RESERVED_NAMESPACE = 'aps'; /**< @type string The Apple-reserved aps namespace. */
 
 	protected $_bAutoAdjustLongPayload = true; /**< @type boolean If the JSON payload is longer than maximum allowed size, shorts message text. */
 
@@ -194,9 +195,9 @@ class ApnsPHP_Message
 	 */
 	public function setCustomProperty($sName, $mValue)
 	{
-		if ($sName == 'aps') {
+		if ($sName == self::APPLE_RESERVED_NAMESPACE) {
 			throw new ApnsPHP_Message_Exception(
-				"Property name 'aps' can not be used for custom property."
+				"Property name '" . self::APPLE_RESERVED_NAMESPACE . "' can not be used for custom property."
 			);
 		}
 		$this->_aCustomProperties[trim($sName)] = $mValue;
@@ -309,16 +310,16 @@ class ApnsPHP_Message
 	 */
 	protected function _getPayload()
 	{
-		$aPayload['aps'] = array();
+		$aPayload[self::APPLE_RESERVED_NAMESPACE] = array();
 
 		if (isset($this->_sText)) {
-			$aPayload['aps']['alert'] = (string)$this->_sText;
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
 		}
 		if (isset($this->_nBadge) && $this->_nBadge > 0) {
-			$aPayload['aps']['badge'] = (int)$this->_nBadge;
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->_nBadge;
 		}
 		if (isset($this->_sSound)) {
-			$aPayload['aps']['sound'] = (string)$this->_sSound;
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['sound'] = (string)$this->_sSound;
 		}
 
 		if (is_array($this->_aCustomProperties)) {
@@ -339,7 +340,11 @@ class ApnsPHP_Message
 	 */
 	public function getPayload()
 	{
-		$sJSONPayload = json_encode($this->_getPayload(), JSON_FORCE_OBJECT);
+		$sJSONPayload = str_replace(
+			'"' . self::APPLE_RESERVED_NAMESPACE . '":[]',
+			'"' . self::APPLE_RESERVED_NAMESPACE . '":{}',
+			json_encode($this->_getPayload())
+		);
 		$nJSONPayloadLen = strlen($sJSONPayload);
 
 		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {
