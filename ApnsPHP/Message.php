@@ -303,13 +303,11 @@ class ApnsPHP_Message
 	}
 
 	/**
-	 * Convert the message in a JSON-encoded payload.
+	 * Get the payload dictionary.
 	 *
-	 * @throws ApnsPHP_Message_Exception if payload is longer than maximum allowed
-	 *         size and AutoAdjustLongPayload is disabled.
-	 * @return @type string JSON-encoded payload.
+	 * @return @type array The payload dictionary.
 	 */
-	public function getPayload()
+	protected function _getPayload()
 	{
 		$aPayload['aps'] = array();
 
@@ -329,7 +327,19 @@ class ApnsPHP_Message
 			}
 		}
 
-		$sJSONPayload = json_encode($aPayload, JSON_FORCE_OBJECT);
+		return $aPayload;
+	}
+
+	/**
+	 * Convert the message in a JSON-encoded payload.
+	 *
+	 * @throws ApnsPHP_Message_Exception if payload is longer than maximum allowed
+	 *         size and AutoAdjustLongPayload is disabled.
+	 * @return @type string JSON-encoded payload.
+	 */
+	public function getPayload()
+	{
+		$sJSONPayload = json_encode($this->_getPayload(), JSON_FORCE_OBJECT);
 		$nJSONPayloadLen = strlen($sJSONPayload);
 
 		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {
