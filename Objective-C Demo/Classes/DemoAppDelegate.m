@@ -60,6 +60,10 @@
   }
 }
 
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+  application.applicationIconBadgeNumber = 0;
+}
+
 #pragma mark -
 #pragma mark Remote notifications
 
