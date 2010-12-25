@@ -37,6 +37,8 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	const ERROR_RESPONSE_SIZE = 6; /**< @type integer Error-response packet size. */
 	const ERROR_RESPONSE_COMMAND = 8; /**< @type integer Error-response command code. */
 
+	const STATUS_CODE_INTERNAL_ERROR = 999; /**< @type integer Status code for internal error (not Apple). */
+
 	protected $_aErrorResponseMessages = array(
 		0   => 'No errors encountered',
 		1   => 'Processing error',
@@ -46,7 +48,8 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		5   => 'Invalid token size',
 		6   => 'Invalid topic size',
 		7   => 'Invalid payload size',
-		8   => 'Invalid token'
+		8   => 'Invalid token',
+		self::STATUS_CODE_INTERNAL_ERROR => 'Internal error'
 	); /**< @type array Error-response messages. */
 
 	protected $_nSendRetryTimes = 3; /**< @type integer Send retry times. */
@@ -143,6 +146,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 				$sCustomIdentifier = (string)$message->getCustomIdentifier();
 				$sCustomIdentifier = sprintf('[custom identifier: %s]', empty($sCustomIdentifier) ? 'unset' : $sCustomIdentifier);
 
+				$nErrors = 0;
 				if (!empty($aMessage['ERRORS'])) {
 					foreach($aMessage['ERRORS'] as $aError) {
 						if ($aError['statusCode'] == 0) {
@@ -165,12 +169,20 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 				}
 
 				$nLen = strlen($aMessage['BINARY_NOTIFICATION']);
-				$this->_log("STATUS: Sending message ID {$k} {$sCustomIdentifier}: {$nLen} bytes.");
+				$this->_log("STATUS: Sending message ID {$k} {$sCustomIdentifier} (" . ($nErrors + 1) . "/{$this->_nSendRetryTimes}): {$nLen} bytes.");
+
+				$aErrorMessage = null;
 				if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, $aMessage['BINARY_NOTIFICATION']))) {
-					$this->_log("WARNING: Unable to send message ID {$k} {$sCustomIdentifier}. Written {$nWritten} bytes instead of {$nLen} bytes");
+					$aErrorMessage = array(
+						'identifier' => $k,
+						'statusCode' => self::STATUS_CODE_INTERNAL_ERROR,
+						'statusMessage' => sprintf('%s (%d bytes written instead of %d bytes)',
+							$this->_aErrorResponseMessages[self::STATUS_CODE_INTERNAL_ERROR], $nWritten, $nLen
+						)
+					);
 				}
 
-				$bError = $this->_updateQueue();
+				$bError = $this->_updateQueue($aErrorMessage);
 				if ($bError) {
 					break;
 				}
@@ -271,7 +283,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	}
 
 	/**
-	 * Reads and error message (if present) from the main stream.
+	 * Reads an error message (if present) from the main stream.
 	 * If the error message is present and valid the error message is returned,
 	 * otherwhise null is returned.
 	 *
@@ -302,13 +314,15 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	}
 
 	/**
-	 * Checks for error message and deletes messages successfully sent from message queue .
+	 * Checks for error message and deletes messages successfully sent from message queue.
 	 *
+	 * @param  $aErrorMessage @type array @optional The error message.
+	 *         If null it will be read from the main stream. @see _readErrorMessage()
 	 * @return @type boolean True if an error was received.
 	 */
-	protected function _updateQueue()
+	protected function _updateQueue($aErrorMessage = null)
 	{
-		$aErrorMessage = $this->_readErrorMessage();
+		$aErrorMessage = $aErrorMessage ?: $this->_readErrorMessage();
 		if (!isset($aErrorMessage)) {
 			return false;
 		}
