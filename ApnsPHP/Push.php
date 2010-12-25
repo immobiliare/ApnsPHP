@@ -161,7 +161,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 					}
 					if (($nErrors = count($aMessage['ERRORS'])) >= $this->_nSendRetryTimes) {
 						$this->_log(
-							"WARNING: Message ID {$k} {$sCustomIdentifier} has too many errors ($nErrors/{$this->_nSendRetryTimes}), removing from queue..."
+							"WARNING: Message ID {$k} {$sCustomIdentifier} has {$nErrors} errors, removing from queue..."
 						);
 						$this->_removeMessageFromQueue($k, true);
 						continue;
@@ -316,15 +316,26 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	/**
 	 * Checks for error message and deletes messages successfully sent from message queue.
 	 *
-	 * @param  $aErrorMessage @type array @optional The error message.
-	 *         If null it will be read from the main stream. @see _readErrorMessage()
+	 * @param  $aErrorMessage @type array @optional The error message. It will anyway
+	 *         always be read from the main stream. The latest successful message
+	 *         sent is the lower between this error message and the message that
+	 *         was read from the main stream.
+	 *         @see _readErrorMessage()
 	 * @return @type boolean True if an error was received.
 	 */
 	protected function _updateQueue($aErrorMessage = null)
 	{
-		$aErrorMessage = $aErrorMessage ?: $this->_readErrorMessage();
-		if (!isset($aErrorMessage)) {
+		$aStreamErrorMessage = $this->_readErrorMessage();
+		if (!isset($aErrorMessage) && !isset($aStreamErrorMessage)) {
 			return false;
+		} else if (isset($aErrorMessage, $aStreamErrorMessage)) {
+			if ($aStreamErrorMessage['identifier'] <= $aErrorMessage['identifier']) {
+				$aErrorMessage = $aStreamErrorMessage;
+				unset($aStreamErrorMessage);
+			}
+		} else if (!isset($aErrorMessage) && isset($aStreamErrorMessage)) {
+			$aErrorMessage = $aStreamErrorMessage;
+			unset($aStreamErrorMessage);
 		}
 
 		$this->_log('ERROR: Unable to send message ID ' .
