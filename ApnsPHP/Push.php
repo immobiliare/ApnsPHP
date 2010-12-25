@@ -318,7 +318,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *
 	 * @param  $aErrorMessage @type array @optional The error message. It will anyway
 	 *         always be read from the main stream. The latest successful message
-	 *         sent is the lower between this error message and the message that
+	 *         sent is the lowest between this error message and the message that
 	 *         was read from the main stream.
 	 *         @see _readErrorMessage()
 	 * @return @type boolean True if an error was received.
