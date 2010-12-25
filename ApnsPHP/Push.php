@@ -155,7 +155,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 							continue 2;
 						}
 					}
-					if ($nErrors = count($aMessage['ERRORS']) > $this->_nSendRetryTimes) {
+					if (($nErrors = count($aMessage['ERRORS'])) >= $this->_nSendRetryTimes) {
 						$this->_log(
 							"WARNING: Message ID {$k} {$sCustomIdentifier} has too many errors ($nErrors/{$this->_nSendRetryTimes}), removing from queue..."
 						);
