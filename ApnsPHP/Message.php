@@ -349,9 +349,9 @@ class ApnsPHP_Message
 
 		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {
 			if ($this->_bAutoAdjustLongPayload) {
-				$nTextLen = strlen($this->_sText);
-				if ($nJSONPayloadLen - $nTextLen <= self::PAYLOAD_MAXIMUM_SIZE) {
-					$this->_sText = substr($this->_sText, 0, $nTextLen - ($nJSONPayloadLen - self::PAYLOAD_MAXIMUM_SIZE));
+				$nMaxTextLen = $nTextLen = strlen($this->_sText) - ($nJSONPayloadLen - self::PAYLOAD_MAXIMUM_SIZE);
+				if ($nMaxTextLen > 0) {
+					while (strlen($this->_sText = mb_substr($this->_sText, 0, --$nTextLen, 'UTF-8')) > $nMaxTextLen);
 					return $this->getPayload();
 				} else {
 					throw new ApnsPHP_Message_Exception(
