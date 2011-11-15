@@ -43,6 +43,7 @@ class ApnsPHP_Message
 	protected $_sText; /**< @type string Alert message to display to the user. */
 	protected $_nBadge; /**< @type integer Number to badge the application icon with. */
 	protected $_sSound; /**< @type string Sound to play. */
+	protected $_bContentAvailable; /**< @type boolean True to initiates the Newsstand background download. @see http://tinyurl.com/ApplePushNotificationNewsstand */
 
 	protected $_aCustomProperties; /**< @type mixed Custom properties container. */
 
@@ -186,6 +187,34 @@ class ApnsPHP_Message
 	}
 
 	/**
+	 * Initiates the Newsstand background download.
+	 * @see http://tinyurl.com/ApplePushNotificationNewsstand
+	 *
+	 * @param  $bContentAvailable @type boolean True to initiates the Newsstand background download.
+	 * @throws ApnsPHP_Message_Exception if ContentAvailable is not a
+	 *         boolean.
+	 */
+	public function setContentAvailable($bContentAvailable = true)
+	{
+		if (!is_bool($bContentAvailable)) {
+			throw new ApnsPHP_Message_Exception(
+				"Invalid content-available value '{$bContentAvailable}'"
+			);
+		}
+		$this->_bContentAvailable = $bContentAvailable ? true : null;
+	}
+
+	/**
+	 * Get if should initiates the Newsstand background download.
+	 *
+	 * @return @type boolean Initiates the Newsstand background download property.
+	 */
+	public function getContentAvailable()
+	{
+		return $this->_bContentAvailable;
+	}
+
+	/**
 	 * Set a custom property.
 	 *
 	 * @param  $sName @type string Custom property name.
@@ -320,6 +349,9 @@ class ApnsPHP_Message
 		}
 		if (isset($this->_sSound)) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['sound'] = (string)$this->_sSound;
+		}
+		if (isset($this->_bContentAvailable)) {
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['content-available'] = (int)$this->_bContentAvailable;
 		}
 
 		if (is_array($this->_aCustomProperties)) {
