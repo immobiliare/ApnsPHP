@@ -31,7 +31,7 @@ require_once 'ApnsPHP/Autoload.php';
 // Instanciate a new ApnsPHP_Push object
 $server = new ApnsPHP_Push_Server(
 	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
-	'server_cerificates_bundle_sandbox.pem'
+	'server_certificates_bundle_sandbox.pem'
 );
 
 // Set the Root Certificate Autority to verify the Apple remote peer

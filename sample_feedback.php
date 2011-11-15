@@ -31,7 +31,7 @@ require_once 'ApnsPHP/Autoload.php';
 // Instanciate a new ApnsPHP_Feedback object
 $feedback = new ApnsPHP_Feedback(
 	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
-	'server_cerificates_bundle_sandbox.pem'
+	'server_certificates_bundle_sandbox.pem'
 );
 
 // Connect to the Apple Push Notification Feedback Service
