@@ -294,10 +294,10 @@ abstract class ApnsPHP_Abstract
 			try {
 				$bConnected = $this->_connect();
 			} catch (ApnsPHP_Exception $e) {
+				$this->_log('ERROR: ' . $e->getMessage());
 				if ($nRetry >= $this->_nConnectRetryTimes) {
 					throw $e;
 				} else {
-					$this->_log('ERROR: ' . $e->getMessage());
 					$this->_log(
 						"INFO: Retry to connect (" . ($nRetry+1) .
 						"/{$this->_nConnectRetryTimes})..."
