@@ -55,6 +55,7 @@ abstract class ApnsPHP_Abstract
 	protected $_nConnectRetryTimes = 3; /**< @type integer Connect retry times. */
 
 	protected $_sProviderCertificateFile; /**< @type string Provider certificate file with key (Bundled PEM). */
+	protected $_sProviderCertificatePassphrase; /**< @type string Provider certificate passphrase. */
 	protected $_sRootCertificationAuthorityFile; /**< @type string Root certification authority file. */
 
 	protected $_nConnectRetryInterval; /**< @type integer Connect retry interval in micro seconds. */
@@ -135,6 +136,17 @@ abstract class ApnsPHP_Abstract
 	public function getLogger()
 	{
 		return $this->_logger;
+	}
+
+	/**
+	 * Set the Provider Certificate passphrase.
+	 *
+	 * @param  $sProviderCertificatePassphrase @type string Provider Certificate
+	 *         passphrase.
+	 */
+	public function setProviderCertificatePassphrase($sProviderCertificatePassphrase)
+	{
+		$this->_sProviderCertificatePassphrase = $sProviderCertificatePassphrase;
 	}
 
 	/**
@@ -344,6 +356,11 @@ abstract class ApnsPHP_Abstract
 			'cafile' => $this->_sRootCertificationAuthorityFile,
 			'local_cert' => $this->_sProviderCertificateFile
 		)));
+
+		if (!empty($this->_sProviderCertificatePassphrase)) {
+			stream_context_set_option($streamContext, 'ssl',
+				'passphrase', $this->_sProviderCertificatePassphrase);
+		}
 
 		$this->_hSocket = @stream_socket_client($sURL, $nError, $sError,
 			$this->_nConnectTimeout, STREAM_CLIENT_CONNECT, $streamContext);

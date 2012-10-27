@@ -34,6 +34,9 @@ $push = new ApnsPHP_Push(
 	'server_certificates_bundle_sandbox.pem'
 );
 
+// Set the Provider Certificate passphrase
+// $push->setProviderCertificatePassphrase('test');
+
 // Set the Root Certificate Autority to verify the Apple remote peer
 $push->setRootCertificationAuthority('entrust_root_certification_authority.pem');
 
