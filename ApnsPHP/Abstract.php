@@ -55,6 +55,7 @@ abstract class ApnsPHP_Abstract
 	protected $_nConnectRetryTimes = 3; /**< @type integer Connect retry times. */
 
 	protected $_sProviderCertificateFile; /**< @type string Provider certificate file with key (Bundled PEM). */
+  protected $_sProviderCertificatePassphrase; /**< @type string Provider certificate file passphrase */
 	protected $_sRootCertificationAuthorityFile; /**< @type string Root certification authority file. */
 
 	protected $_nConnectRetryInterval; /**< @type integer Connect retry interval in micro seconds. */
@@ -274,6 +275,11 @@ abstract class ApnsPHP_Abstract
 	{
 		return $this->_nSocketSelectTimeout;
 	}
+  
+  public function setProviderCertificatePassphrase($passphrase)
+  {
+    $this->_sProviderCertificatePassphrase = $passphrase;
+  }
 
 	/**
 	 * Connects to Apple Push Notification service server.
@@ -342,9 +348,15 @@ abstract class ApnsPHP_Abstract
 		$streamContext = stream_context_create(array('ssl' => array(
 			'verify_peer' => isset($this->_sRootCertificationAuthorityFile),
 			'cafile' => $this->_sRootCertificationAuthorityFile,
-			'local_cert' => $this->_sProviderCertificateFile
-		)));
+			'local_cert' => $this->_sProviderCertificateFile,
 
+		)));
+    
+    if (isset($this->_sProviderCertificatePassphrase))
+    {
+      stream_context_set_option($streamContext, 'ssl', 'passphrase', $this->_sProviderCertificatePassphrase); 
+    }
+    
 		$this->_hSocket = @stream_socket_client($sURL, $nError, $sError,
 			$this->_nConnectTimeout, STREAM_CLIENT_CONNECT, $streamContext);
 
