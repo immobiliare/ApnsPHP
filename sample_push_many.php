@@ -16,7 +16,7 @@
  * to aldo.armiento@gmail.com so we can send you a copy immediately.
  *
  * @author (C) 2010 Aldo Armiento (aldo.armiento@gmail.com)
- * @version $Id: sample_push.php 65 2010-12-13 18:38:39Z aldo.armiento $
+ * @version $Id$
  */
 
 define('VALID_TOKEN', '1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
