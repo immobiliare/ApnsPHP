@@ -44,6 +44,7 @@ abstract class ApnsPHP_Abstract
 
 	const DEVICE_BINARY_SIZE = 32; /**< @type integer Device token length. */
 
+	const WRITE_INTERVAL = 10000; /**< @type integer Default write interval in micro seconds. */
 	const CONNECT_RETRY_INTERVAL = 1000000; /**< @type integer Default connect retry interval in micro seconds. */
 	const SOCKET_SELECT_TIMEOUT = 1000000; /**< @type integer Default socket select timeout in micro seconds. */
 
@@ -58,6 +59,7 @@ abstract class ApnsPHP_Abstract
 	protected $_sProviderCertificatePassphrase; /**< @type string Provider certificate passphrase. */
 	protected $_sRootCertificationAuthorityFile; /**< @type string Root certification authority file. */
 
+	protected $_nWriteInterval; /**< @type integer Write interval in micro seconds. */
 	protected $_nConnectRetryInterval; /**< @type integer Connect retry interval in micro seconds. */
 	protected $_nSocketSelectTimeout; /**< @type integer Socket select timeout in micro seconds. */
 
@@ -91,6 +93,7 @@ abstract class ApnsPHP_Abstract
 		$this->_sProviderCertificateFile = $sProviderCertificateFile;
 
 		$this->_nConnectTimeout = ini_get("default_socket_timeout");
+		$this->_nWriteInterval = self::WRITE_INTERVAL;
 		$this->_nConnectRetryInterval = self::CONNECT_RETRY_INTERVAL;
 		$this->_nSocketSelectTimeout = self::SOCKET_SELECT_TIMEOUT;
 	}
@@ -182,6 +185,30 @@ abstract class ApnsPHP_Abstract
 	public function getCertificateAuthority()
 	{
 		return $this->_sRootCertificationAuthorityFile;
+	}
+
+	/**
+	 * Set the write interval.
+	 *
+	 * After each socket write operation we are sleeping for this 
+	 * time interval. To speed up the sending operations, use Zero
+	 * as parameter but some messages may be lost.
+	 *
+	 * @param  $nWriteInterval @type integer Write interval in micro seconds.
+	 */
+	public function setWriteInterval($nWriteInterval)
+	{
+		$this->_nWriteInterval = (int)$nWriteInterval;
+	}
+
+	/**
+	 * Get the write interval.
+	 *
+	 * @return @type integer Write interval in micro seconds.
+	 */
+	public function getWriteInterval()
+	{
+		return $this->_nWriteInterval;
 	}
 
 	/**

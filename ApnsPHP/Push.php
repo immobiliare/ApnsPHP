@@ -181,6 +181,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 						)
 					);
 				}
+				usleep($this->_nWriteInterval);
 
 				$bError = $this->_updateQueue($aErrorMessage);
 				if ($bError) {
