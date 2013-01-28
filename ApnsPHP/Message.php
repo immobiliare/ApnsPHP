@@ -58,9 +58,9 @@ class ApnsPHP_Message
 	 */
 	public function __construct($sDeviceToken = null)
 	{
-		if (isset($sDeviceToken)) {
-			$this->addRecipient($sDeviceToken);
-		}
+	if (isset($sDeviceToken)) {
+		$this->addRecipient($sDeviceToken);
+	}
 	}
 
 	/**
@@ -72,12 +72,12 @@ class ApnsPHP_Message
 	 */
 	public function addRecipient($sDeviceToken)
 	{
-		if (!preg_match('~^[a-f0-9]{64}$~i', $sDeviceToken)) {
-			throw new ApnsPHP_Message_Exception(
-				"Invalid device token '{$sDeviceToken}'"
-			);
-		}
-		$this->_aDeviceTokens[] = $sDeviceToken;
+	if (!preg_match('~^[a-f0-9]{64}$~i', $sDeviceToken)) {
+		throw new ApnsPHP_Message_Exception(
+		"Invalid device token '{$sDeviceToken}'"
+		);
+	}
+	$this->_aDeviceTokens[] = $sDeviceToken;
 	}
 
 	/**
@@ -90,12 +90,12 @@ class ApnsPHP_Message
 	 */
 	public function getRecipient($nRecipient = 0)
 	{
-		if (!isset($this->_aDeviceTokens[$nRecipient])) {
-			throw new ApnsPHP_Message_Exception(
-				"No recipient at index '{$nRecipient}'"
-			);
-		}
-		return $this->_aDeviceTokens[$nRecipient];
+	if (!isset($this->_aDeviceTokens[$nRecipient])) {
+		throw new ApnsPHP_Message_Exception(
+		"No recipient at index '{$nRecipient}'"
+		);
+	}
+	return $this->_aDeviceTokens[$nRecipient];
 	}
 
 	/**
@@ -105,7 +105,7 @@ class ApnsPHP_Message
 	 */
 	public function getRecipientsNumber()
 	{
-		return count($this->_aDeviceTokens);
+	return count($this->_aDeviceTokens);
 	}
 
 	/**
@@ -115,7 +115,7 @@ class ApnsPHP_Message
 	 */
 	public function getRecipients()
 	{
-		return $this->_aDeviceTokens;
+	return $this->_aDeviceTokens;
 	}
 
 	/**
@@ -125,7 +125,7 @@ class ApnsPHP_Message
 	 */
 	public function setText($sText)
 	{
-		$this->_sText = $sText;
+	$this->_sText = $sText;
 	}
 
 	/**
@@ -135,7 +135,7 @@ class ApnsPHP_Message
 	 */
 	public function getText()
 	{
-		return $this->_sText;
+	return $this->_sText;
 	}
 
 	/**
@@ -147,12 +147,12 @@ class ApnsPHP_Message
 	 */
 	public function setBadge($nBadge)
 	{
-		if (!is_int($nBadge)) {
-			throw new ApnsPHP_Message_Exception(
-				"Invalid badge number '{$nBadge}'"
-			);
-		}
-		$this->_nBadge = $nBadge;
+	if (!is_int($nBadge)) {
+		throw new ApnsPHP_Message_Exception(
+		"Invalid badge number '{$nBadge}'"
+		);
+	}
+	$this->_nBadge = $nBadge;
 	}
 
 	/**
@@ -162,7 +162,7 @@ class ApnsPHP_Message
 	 */
 	public function getBadge()
 	{
-		return $this->_nBadge;
+	return $this->_nBadge;
 	}
 
 	/**
@@ -173,7 +173,7 @@ class ApnsPHP_Message
 	 */
 	public function setSound($sSound = 'default')
 	{
-		$this->_sSound = $sSound;
+	$this->_sSound = $sSound;
 	}
 
 	/**
@@ -183,7 +183,7 @@ class ApnsPHP_Message
 	 */
 	public function getSound()
 	{
-		return $this->_sSound;
+	return $this->_sSound;
 	}
 
 	/**
@@ -196,12 +196,12 @@ class ApnsPHP_Message
 	 */
 	public function setContentAvailable($bContentAvailable = true)
 	{
-		if (!is_bool($bContentAvailable)) {
-			throw new ApnsPHP_Message_Exception(
-				"Invalid content-available value '{$bContentAvailable}'"
-			);
-		}
-		$this->_bContentAvailable = $bContentAvailable ? true : null;
+	if (!is_bool($bContentAvailable)) {
+		throw new ApnsPHP_Message_Exception(
+		"Invalid content-available value '{$bContentAvailable}'"
+		);
+	}
+	$this->_bContentAvailable = $bContentAvailable ? true : null;
 	}
 
 	/**
@@ -211,7 +211,7 @@ class ApnsPHP_Message
 	 */
 	public function getContentAvailable()
 	{
-		return $this->_bContentAvailable;
+	return $this->_bContentAvailable;
 	}
 
 	/**
@@ -224,12 +224,12 @@ class ApnsPHP_Message
 	 */
 	public function setCustomProperty($sName, $mValue)
 	{
-		if ($sName == self::APPLE_RESERVED_NAMESPACE) {
-			throw new ApnsPHP_Message_Exception(
-				"Property name '" . self::APPLE_RESERVED_NAMESPACE . "' can not be used for custom property."
-			);
-		}
-		$this->_aCustomProperties[trim($sName)] = $mValue;
+	if ($sName == self::APPLE_RESERVED_NAMESPACE) {
+		throw new ApnsPHP_Message_Exception(
+		"Property name '" . self::APPLE_RESERVED_NAMESPACE . "' can not be used for custom property."
+		);
+	}
+	$this->_aCustomProperties[trim($sName)] = $mValue;
 	}
 
 	/**
@@ -241,11 +241,11 @@ class ApnsPHP_Message
 	 */
 	public function getCustomPropertyName()
 	{
-		if (!is_array($this->_aCustomProperties)) {
-			return;
-		}
-		$aKeys = array_keys($this->_aCustomProperties);
-		return $aKeys[0];
+	if (!is_array($this->_aCustomProperties)) {
+		return;
+	}
+	$aKeys = array_keys($this->_aCustomProperties);
+	return $aKeys[0];
 	}
 
 	/**
@@ -257,11 +257,11 @@ class ApnsPHP_Message
 	 */
 	public function getCustomPropertyValue()
 	{
-		if (!is_array($this->_aCustomProperties)) {
-			return;
-		}
-		$aKeys = array_keys($this->_aCustomProperties);
-		return $this->_aCustomProperties[$aKeys[0]];
+	if (!is_array($this->_aCustomProperties)) {
+		return;
+	}
+	$aKeys = array_keys($this->_aCustomProperties);
+	return $this->_aCustomProperties[$aKeys[0]];
 	}
 
 	/**
@@ -271,10 +271,10 @@ class ApnsPHP_Message
 	 */
 	public function getCustomPropertyNames()
 	{
-		if (!is_array($this->_aCustomProperties)) {
-			return array();
-		}
-		return array_keys($this->_aCustomProperties);
+	if (!is_array($this->_aCustomProperties)) {
+		return array();
+	}
+	return array_keys($this->_aCustomProperties);
 	}
 
 	/**
@@ -287,12 +287,12 @@ class ApnsPHP_Message
 	 */
 	public function getCustomProperty($sName)
 	{
-		if (!array_key_exists($sName, $this->_aCustomProperties)) {
-			throw new ApnsPHP_Message_Exception(
-				"No property exists with the specified name '{$sName}'."
-			);
-		}
-		return $this->_aCustomProperties[$sName];
+	if (!array_key_exists($sName, $this->_aCustomProperties)) {
+		throw new ApnsPHP_Message_Exception(
+		"No property exists with the specified name '{$sName}'."
+		);
+	}
+	return $this->_aCustomProperties[$sName];
 	}
 
 	/**
@@ -303,7 +303,7 @@ class ApnsPHP_Message
 	 */
 	public function setAutoAdjustLongPayload($bAutoAdjust)
 	{
-		$this->_bAutoAdjustLongPayload = (boolean)$bAutoAdjust;
+	$this->_bAutoAdjustLongPayload = (boolean)$bAutoAdjust;
 	}
 
 	/**
@@ -313,7 +313,7 @@ class ApnsPHP_Message
 	 */
 	public function getAutoAdjustLongPayload()
 	{
-		return $this->_bAutoAdjustLongPayload;
+	return $this->_bAutoAdjustLongPayload;
 	}
 
 	/**
@@ -324,12 +324,12 @@ class ApnsPHP_Message
 	 */
 	public function __toString()
 	{
-		try {
-			$sJSONPayload = $this->getPayload();
-		} catch (ApnsPHP_Message_Exception $e) {
-			$sJSONPayload = '';
-		}
-		return $sJSONPayload;
+	try {
+		$sJSONPayload = $this->getPayload();
+	} catch (ApnsPHP_Message_Exception $e) {
+		$sJSONPayload = '';
+	}
+	return $sJSONPayload;
 	}
 
 	/**
@@ -339,28 +339,28 @@ class ApnsPHP_Message
 	 */
 	protected function _getPayload()
 	{
-		$aPayload[self::APPLE_RESERVED_NAMESPACE] = array();
+	$aPayload[self::APPLE_RESERVED_NAMESPACE] = array();
 
-		if (isset($this->_sText)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
-		}
-		if (isset($this->_nBadge) && $this->_nBadge >= 0) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->_nBadge;
-		}
-		if (isset($this->_sSound)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['sound'] = (string)$this->_sSound;
-		}
-		if (isset($this->_bContentAvailable)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['content-available'] = (int)$this->_bContentAvailable;
-		}
+	if (isset($this->_sText)) {
+		$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
+	}
+	if (isset($this->_nBadge) && $this->_nBadge >= 0) {
+		$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->_nBadge;
+	}
+	if (isset($this->_sSound)) {
+		$aPayload[self::APPLE_RESERVED_NAMESPACE]['sound'] = (string)$this->_sSound;
+	}
+	if (isset($this->_bContentAvailable)) {
+		$aPayload[self::APPLE_RESERVED_NAMESPACE]['content-available'] = (int)$this->_bContentAvailable;
+	}
 
-		if (is_array($this->_aCustomProperties)) {
-			foreach($this->_aCustomProperties as $sPropertyName => $mPropertyValue) {
-				$aPayload[$sPropertyName] = $mPropertyValue;
-			}
+	if (is_array($this->_aCustomProperties)) {
+		foreach($this->_aCustomProperties as $sPropertyName => $mPropertyValue) {
+		$aPayload[$sPropertyName] = $mPropertyValue;
 		}
+	}
 
-		return $aPayload;
+	return $aPayload;
 	}
 
 	/**
@@ -372,42 +372,42 @@ class ApnsPHP_Message
 	 */
 	public function getPayload()
 	{
-		$sJSON = json_encode($this->_getPayload(), defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0);
-		if (!defined('JSON_UNESCAPED_UNICODE') && function_exists('mb_convert_encoding')) {
-			$sJSON = preg_replace_callback(
-				'~\\\\u([0-9a-f]{4})~i',
-				create_function('$aMatches', 'return mb_convert_encoding(pack("H*", $aMatches[1]), "UTF-8", "UTF-16");'),
-				$sJSON);
-		}
+	$sJSON = json_encode($this->_getPayload(), defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0);
+	if (!defined('JSON_UNESCAPED_UNICODE') && function_exists('mb_convert_encoding')) {
+		$sJSON = preg_replace_callback(
+		'~\\\\u([0-9a-f]{4})~i',
+		create_function('$aMatches', 'return mb_convert_encoding(pack("H*", $aMatches[1]), "UTF-8", "UTF-16");'),
+		$sJSON);
+	}
 
-		$sJSONPayload = str_replace(
-			'"' . self::APPLE_RESERVED_NAMESPACE . '":[]',
-			'"' . self::APPLE_RESERVED_NAMESPACE . '":{}',
-			$sJSON
+	$sJSONPayload = str_replace(
+		'"' . self::APPLE_RESERVED_NAMESPACE . '":[]',
+		'"' . self::APPLE_RESERVED_NAMESPACE . '":{}',
+		$sJSON
+	);
+	$nJSONPayloadLen = strlen($sJSONPayload);
+
+	if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {
+		if ($this->_bAutoAdjustLongPayload) {
+		$nMaxTextLen = $nTextLen = strlen($this->_sText) - ($nJSONPayloadLen - self::PAYLOAD_MAXIMUM_SIZE);
+		if ($nMaxTextLen > 0) {
+			while (strlen($this->_sText = mb_substr($this->_sText, 0, --$nTextLen, 'UTF-8')) > $nMaxTextLen);
+			return $this->getPayload();
+		} else {
+			throw new ApnsPHP_Message_Exception(
+			"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " .
+			self::PAYLOAD_MAXIMUM_SIZE . " bytes. The message text can not be auto-adjusted."
+			);
+		}
+		} else {
+		throw new ApnsPHP_Message_Exception(
+			"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " .
+			self::PAYLOAD_MAXIMUM_SIZE . " bytes"
 		);
-		$nJSONPayloadLen = strlen($sJSONPayload);
-
-		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {
-			if ($this->_bAutoAdjustLongPayload) {
-				$nMaxTextLen = $nTextLen = strlen($this->_sText) - ($nJSONPayloadLen - self::PAYLOAD_MAXIMUM_SIZE);
-				if ($nMaxTextLen > 0) {
-					while (strlen($this->_sText = mb_substr($this->_sText, 0, --$nTextLen, 'UTF-8')) > $nMaxTextLen);
-					return $this->getPayload();
-				} else {
-					throw new ApnsPHP_Message_Exception(
-						"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " .
-						self::PAYLOAD_MAXIMUM_SIZE . " bytes. The message text can not be auto-adjusted."
-					);
-				}
-			} else {
-				throw new ApnsPHP_Message_Exception(
-					"JSON Payload is too long: {$nJSONPayloadLen} bytes. Maximum size is " .
-					self::PAYLOAD_MAXIMUM_SIZE . " bytes"
-				);
-			}
 		}
+	}
 
-		return $sJSONPayload;
+	return $sJSONPayload;
 	}
 
 	/**
@@ -418,12 +418,12 @@ class ApnsPHP_Message
 	 */
 	public function setExpiry($nExpiryValue)
 	{
-		if (!is_int($nExpiryValue)) {
-			throw new ApnsPHP_Message_Exception(
-				"Invalid seconds number '{$nExpiryValue}'"
-			);
-		}
-		$this->_nExpiryValue = $nExpiryValue;
+	if (!is_int($nExpiryValue)) {
+		throw new ApnsPHP_Message_Exception(
+		"Invalid seconds number '{$nExpiryValue}'"
+		);
+	}
+	$this->_nExpiryValue = $nExpiryValue;
 	}
 
 	/**
@@ -433,7 +433,7 @@ class ApnsPHP_Message
 	 */
 	public function getExpiry()
 	{
-		return $this->_nExpiryValue;
+	return $this->_nExpiryValue;
 	}
 
 	/**
@@ -450,7 +450,7 @@ class ApnsPHP_Message
 	 */
 	public function setCustomIdentifier($mCustomIdentifier)
 	{
-		$this->_mCustomIdentifier = $mCustomIdentifier;
+	$this->_mCustomIdentifier = $mCustomIdentifier;
 	}
 
 	/**
@@ -460,6 +460,6 @@ class ApnsPHP_Message
 	 */
 	public function getCustomIdentifier()
 	{
-		return $this->_mCustomIdentifier;
+	return $this->_mCustomIdentifier;
 	}
 }
