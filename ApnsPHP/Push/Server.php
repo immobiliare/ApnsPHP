@@ -58,29 +58,29 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function __construct($nEnvironment, $sProviderCertificateFile)
 	{
-		parent::__construct($nEnvironment, $sProviderCertificateFile);
+	parent::__construct($nEnvironment, $sProviderCertificateFile);
 
-		$this->_nParentPid = posix_getpid();
-		$this->_hShm = shm_attach(mt_rand(), self::SHM_SIZE);
-		if ($this->_hShm === false) {
-			throw new ApnsPHP_Push_Server_Exception(
-				'Unable to get shared memory segment'
-			);
-		}
+	$this->_nParentPid = posix_getpid();
+	$this->_hShm = shm_attach(mt_rand(), self::SHM_SIZE);
+	if ($this->_hShm === false) {
+		throw new ApnsPHP_Push_Server_Exception(
+		'Unable to get shared memory segment'
+		);
+	}
 
-		$this->_hSem = sem_get(mt_rand());
-		if ($this->_hSem === false) {
-			throw new ApnsPHP_Push_Server_Exception(
-				'Unable to get semaphore id'
-			);
-		}
+	$this->_hSem = sem_get(mt_rand());
+	if ($this->_hSem === false) {
+		throw new ApnsPHP_Push_Server_Exception(
+		'Unable to get semaphore id'
+		);
+	}
 
-		register_shutdown_function(array($this, 'onShutdown'));
+	register_shutdown_function(array($this, 'onShutdown'));
 
-		pcntl_signal(SIGCHLD, array($this, 'onChildExited'));
-		foreach(array(SIGTERM, SIGQUIT, SIGINT) as $nSignal) {
-			pcntl_signal($nSignal, array($this, 'onSignal'));
-		}
+	pcntl_signal(SIGCHLD, array($this, 'onChildExited'));
+	foreach(array(SIGTERM, SIGQUIT, SIGINT) as $nSignal) {
+		pcntl_signal($nSignal, array($this, 'onSignal'));
+	}
 	}
 
 	/**
@@ -98,8 +98,8 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function run()
 	{
-		pcntl_signal_dispatch();
-		return $this->_nRunningProcesses > 0;
+	pcntl_signal_dispatch();
+	return $this->_nRunningProcesses > 0;
 	}
 
 	/**
@@ -108,9 +108,9 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function onChildExited()
 	{
-		while (pcntl_waitpid(-1, $nStatus, WNOHANG) > 0) {
-			$this->_nRunningProcesses--;
-		}
+	while (pcntl_waitpid(-1, $nStatus, WNOHANG) > 0) {
+		$this->_nRunningProcesses--;
+	}
 	}
 
 	/**
@@ -121,20 +121,20 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function onSignal($nSignal)
 	{
-		switch ($nSignal) {
-			case SIGTERM:
-			case SIGQUIT:
-			case SIGINT:
-				if (($nPid = posix_getpid()) != $this->_nParentPid) {
-					$this->_log("INFO: Child $nPid received signal #{$nSignal}, shutdown...");
-					$this->_nRunningProcesses--;
-					exit(0);
-				}
-				break;
-			default:
-				$this->_log("INFO: Ignored signal #{$nSignal}.");
-				break;
+	switch ($nSignal) {
+		case SIGTERM:
+		case SIGQUIT:
+		case SIGINT:
+		if (($nPid = posix_getpid()) != $this->_nParentPid) {
+			$this->_log("INFO: Child $nPid received signal #{$nSignal}, shutdown...");
+			$this->_nRunningProcesses--;
+			exit(0);
 		}
+		break;
+		default:
+		$this->_log("INFO: Ignored signal #{$nSignal}.");
+		break;
+	}
 	}
 
 	/**
@@ -145,11 +145,11 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function onShutdown()
 	{
-		if (posix_getpid() == $this->_nParentPid) {
-			$this->_log('INFO: Parent shutdown, cleaning memory...');
-			@shm_remove($this->_hShm) && @shm_detach($this->_hShm);
-			@sem_remove($this->_hSem);
-		}
+	if (posix_getpid() == $this->_nParentPid) {
+		$this->_log('INFO: Parent shutdown, cleaning memory...');
+		@shm_remove($this->_hShm) && @shm_detach($this->_hShm);
+		@sem_remove($this->_hSem);
+	}
 	}
 
 	/**
@@ -159,11 +159,11 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function setProcesses($nProcesses)
 	{
-		$nProcesses = (int)$nProcesses;
-		if ($nProcesses <= 0) {
-			return;
-		}
-		$this->_nProcesses = $nProcesses;
+	$nProcesses = (int)$nProcesses;
+	if ($nProcesses <= 0) {
+		return;
+	}
+	$this->_nProcesses = $nProcesses;
 	}
 
 	/**
@@ -174,28 +174,28 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function start()
 	{
-		for ($i = 0; $i < $this->_nProcesses; $i++) {
-			$this->_nCurrentProcess = $i;
-			$this->_aPids[$i] = $nPid = pcntl_fork();
-			if ($nPid == -1) {
-				$this->_log('WARNING: Could not fork');
-			} else if ($nPid > 0) {
-				// Parent process
-				$this->_log("INFO: Forked process PID {$nPid}");
-				$this->_nRunningProcesses++;
-			} else {
-				// Child process
-				try {
-					parent::connect();
-				} catch (ApnsPHP_Exception $e) {
-					$this->_log('ERROR: ' . $e->getMessage() . ', exiting...');
-					exit(1);
-				}
-				$this->_mainLoop();
-				parent::disconnect();
-				exit(0);
-			}
+	for ($i = 0; $i < $this->_nProcesses; $i++) {
+		$this->_nCurrentProcess = $i;
+		$this->_aPids[$i] = $nPid = pcntl_fork();
+		if ($nPid == -1) {
+		$this->_log('WARNING: Could not fork');
+		} else if ($nPid > 0) {
+		// Parent process
+		$this->_log("INFO: Forked process PID {$nPid}");
+		$this->_nRunningProcesses++;
+		} else {
+		// Child process
+		try {
+			parent::connect();
+		} catch (ApnsPHP_Exception $e) {
+			$this->_log('ERROR: ' . $e->getMessage() . ', exiting...');
+			exit(1);
 		}
+		$this->_mainLoop();
+		parent::disconnect();
+		exit(0);
+		}
+	}
 	}
 
 	/**
@@ -208,16 +208,16 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function add(ApnsPHP_Message $message)
 	{
-		static $n = 0;
-		if ($n >= $this->_nProcesses) {
-			$n = 0;
-		}
-		sem_acquire($this->_hSem);
-		$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $n);
-		$aQueue[] = $message;
-		$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $n, $aQueue);
-		sem_release($this->_hSem);
-		$n++;
+	static $n = 0;
+	if ($n >= $this->_nProcesses) {
+		$n = 0;
+	}
+	sem_acquire($this->_hSem);
+	$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $n);
+	$aQueue[] = $message;
+	$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $n, $aQueue);
+	sem_release($this->_hSem);
+	$n++;
 	}
 
 	/**
@@ -232,16 +232,16 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function getQueue($bEmpty = true)
 	{
-		$aRet = array();
-		sem_acquire($this->_hSem);
-		for ($i = 0; $i < $this->_nProcesses; $i++) {
-			$aRet = array_merge($aRet, $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i));
-			if ($bEmpty) {
-				$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i);
-			}
+	$aRet = array();
+	sem_acquire($this->_hSem);
+	for ($i = 0; $i < $this->_nProcesses; $i++) {
+		$aRet = array_merge($aRet, $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i));
+		if ($bEmpty) {
+		$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $i);
 		}
-		sem_release($this->_hSem);
-		return $aRet;
+	}
+	sem_release($this->_hSem);
+	return $aRet;
 	}
 
 	/**
@@ -254,13 +254,13 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	public function getErrors($bEmpty = true)
 	{
-		sem_acquire($this->_hSem);
-		$aRet = $this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY);
-		if ($bEmpty) {
-			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0, array());
-		}
-		sem_release($this->_hSem);
-		return $aRet;
+	sem_acquire($this->_hSem);
+	$aRet = $this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY);
+	if ($bEmpty) {
+		$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0, array());
+	}
+	sem_release($this->_hSem);
+	return $aRet;
 	}
 
 	/**
@@ -272,34 +272,34 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	protected function _mainLoop()
 	{
-		while (true) {
-			pcntl_signal_dispatch();
+	while (true) {
+		pcntl_signal_dispatch();
 
-			if (posix_getppid() != $this->_nParentPid) {
-				$this->_log("INFO: Parent process {$this->_nParentPid} died unexpectedly, exiting...");
-				break;
-			}
-
-			sem_acquire($this->_hSem);
-			$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0,
-				array_merge($this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY), parent::getErrors())
-			);
-
-			$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
-			foreach($aQueue as $message) {
-				parent::add($message);
-			}
-			$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
-			sem_release($this->_hSem);
-
-			$nMessages = count($aQueue);
-			if ($nMessages > 0) {
-				$this->_log('INFO: Process ' . ($this->_nCurrentProcess + 1) . " has {$nMessages} messages, sending...");
-				parent::send();
-			} else {
-				usleep(self::MAIN_LOOP_USLEEP);
-			}
+		if (posix_getppid() != $this->_nParentPid) {
+		$this->_log("INFO: Parent process {$this->_nParentPid} died unexpectedly, exiting...");
+		break;
 		}
+
+		sem_acquire($this->_hSem);
+		$this->_setQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY, 0,
+		array_merge($this->_getQueue(self::SHM_ERROR_MESSAGES_QUEUE_KEY), parent::getErrors())
+		);
+
+		$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
+		foreach($aQueue as $message) {
+		parent::add($message);
+		}
+		$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
+		sem_release($this->_hSem);
+
+		$nMessages = count($aQueue);
+		if ($nMessages > 0) {
+		$this->_log('INFO: Process ' . ($this->_nCurrentProcess + 1) . " has {$nMessages} messages, sending...");
+		parent::send();
+		} else {
+		usleep(self::MAIN_LOOP_USLEEP);
+		}
+	}
 	}
 
 	/**
@@ -312,10 +312,10 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	protected function _getQueue($nQueueKey, $nProcess = 0)
 	{
-		if (!shm_has_var($this->_hShm, $nQueueKey + $nProcess)) {
-			return array();
-		}
-		return shm_get_var($this->_hShm, $nQueueKey + $nProcess);
+	if (!shm_has_var($this->_hShm, $nQueueKey + $nProcess)) {
+		return array();
+	}
+	return shm_get_var($this->_hShm, $nQueueKey + $nProcess);
 	}
 
 	/**
@@ -330,9 +330,9 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	protected function _setQueue($nQueueKey, $nProcess = 0, $aQueue = array())
 	{
-		if (!is_array($aQueue)) {
-			$aQueue = array();
-		}
-		return shm_put_var($this->_hShm, $nQueueKey + $nProcess, $aQueue);
+	if (!is_array($aQueue)) {
+		$aQueue = array();
+	}
+	return shm_put_var($this->_hShm, $nQueueKey + $nProcess, $aQueue);
 	}
 }

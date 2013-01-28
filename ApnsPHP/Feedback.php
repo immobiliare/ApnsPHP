@@ -42,8 +42,8 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 	const TOKEN_LENGTH_BINARY_SIZE = 2; /**< @type integer Token length binary size in bytes. */
 
 	protected $_aServiceURLs = array(
-		'ssl://feedback.push.apple.com:2196', // Production environment
-		'ssl://feedback.sandbox.push.apple.com:2196' // Sandbox environment
+	'ssl://feedback.push.apple.com:2196', // Production environment
+	'ssl://feedback.sandbox.push.apple.com:2196' // Sandbox environment
 	); /**< @type array Feedback URLs environments. */
 
 	protected $_aFeedback; /**< @type array Feedback container. */
@@ -65,43 +65,43 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 	 */
 	public function receive()
 	{
-		$nFeedbackTupleLen = self::TIME_BINARY_SIZE + self::TOKEN_LENGTH_BINARY_SIZE + self::DEVICE_BINARY_SIZE;
+	$nFeedbackTupleLen = self::TIME_BINARY_SIZE + self::TOKEN_LENGTH_BINARY_SIZE + self::DEVICE_BINARY_SIZE;
 
-		$this->_aFeedback = array();
-		$sBuffer = '';
-		while (!feof($this->_hSocket)) {
-			$this->_log('INFO: Reading...');
-			$sBuffer .= $sCurrBuffer = fread($this->_hSocket, 8192);
-			$nCurrBufferLen = strlen($sCurrBuffer);
-			if ($nCurrBufferLen > 0) {
-				$this->_log("INFO: {$nCurrBufferLen} bytes read.");
-			}
-			unset($sCurrBuffer, $nCurrBufferLen);
-
-			$nBufferLen = strlen($sBuffer);
-			if ($nBufferLen >= $nFeedbackTupleLen) {
-				$nFeedbackTuples = floor($nBufferLen / $nFeedbackTupleLen);
-				for ($i = 0; $i < $nFeedbackTuples; $i++) {
-					$sFeedbackTuple = substr($sBuffer, 0, $nFeedbackTupleLen);
-					$sBuffer = substr($sBuffer, $nFeedbackTupleLen);
-					$this->_aFeedback[] = $aFeedback = $this->_parseBinaryTuple($sFeedbackTuple);
-					$this->_log(sprintf("INFO: New feedback tuple: timestamp=%d (%s), tokenLength=%d, deviceToken=%s.",
-						$aFeedback['timestamp'], date('Y-m-d H:i:s', $aFeedback['timestamp']),
-						$aFeedback['tokenLength'], $aFeedback['deviceToken']
-					));
-					unset($aFeedback);
-				}
-			}
-
-			$read = array($this->_hSocket);
-			$null = NULL;
-			$nChangedStreams = stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
-			if ($nChangedStreams === false) {
-				$this->_log('WARNING: Unable to wait for a stream availability.');
-				break;
-			}
+	$this->_aFeedback = array();
+	$sBuffer = '';
+	while (!feof($this->_hSocket)) {
+		$this->_log('INFO: Reading...');
+		$sBuffer .= $sCurrBuffer = fread($this->_hSocket, 8192);
+		$nCurrBufferLen = strlen($sCurrBuffer);
+		if ($nCurrBufferLen > 0) {
+		$this->_log("INFO: {$nCurrBufferLen} bytes read.");
 		}
-		return $this->_aFeedback;
+		unset($sCurrBuffer, $nCurrBufferLen);
+
+		$nBufferLen = strlen($sBuffer);
+		if ($nBufferLen >= $nFeedbackTupleLen) {
+		$nFeedbackTuples = floor($nBufferLen / $nFeedbackTupleLen);
+		for ($i = 0; $i < $nFeedbackTuples; $i++) {
+			$sFeedbackTuple = substr($sBuffer, 0, $nFeedbackTupleLen);
+			$sBuffer = substr($sBuffer, $nFeedbackTupleLen);
+			$this->_aFeedback[] = $aFeedback = $this->_parseBinaryTuple($sFeedbackTuple);
+			$this->_log(sprintf("INFO: New feedback tuple: timestamp=%d (%s), tokenLength=%d, deviceToken=%s.",
+			$aFeedback['timestamp'], date('Y-m-d H:i:s', $aFeedback['timestamp']),
+			$aFeedback['tokenLength'], $aFeedback['deviceToken']
+			));
+			unset($aFeedback);
+		}
+		}
+
+		$read = array($this->_hSocket);
+		$null = NULL;
+		$nChangedStreams = stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
+		if ($nChangedStreams === false) {
+		$this->_log('WARNING: Unable to wait for a stream availability.');
+		break;
+		}
+	}
+	return $this->_aFeedback;
 	}
 
 	/**
@@ -112,6 +112,6 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 	 */
 	protected function _parseBinaryTuple($sBinaryTuple)
 	{
-		return unpack('Ntimestamp/ntokenLength/H*deviceToken', $sBinaryTuple);
+	return unpack('Ntimestamp/ntokenLength/H*deviceToken', $sBinaryTuple);
 	}
 }
