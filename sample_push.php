@@ -59,6 +59,9 @@ $message->setText('Hello APNs-enabled device!');
 // Play the default sound
 $message->setSound();
 
+// Set the slide-to-unlock message
+$message->setActionLocKey('bling');
+
 // Set a custom property
 $message->setCustomProperty('acme2', array('bang', 'whiz'));
 
