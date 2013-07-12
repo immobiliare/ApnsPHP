@@ -43,6 +43,7 @@ class ApnsPHP_Message
 	protected $_sText; /**< @type string Alert message to display to the user. */
 	protected $_nBadge; /**< @type integer Number to badge the application icon with. */
 	protected $_sSound; /**< @type string Sound to play. */
+	protected $_sActionLocKey; /**< @type string Text to display in the "slide to unlock" area. */
 	protected $_bContentAvailable; /**< @type boolean True to initiates the Newsstand background download. @see http://tinyurl.com/ApplePushNotificationNewsstand */
 
 	protected $_aCustomProperties; /**< @type mixed Custom properties container. */
@@ -344,6 +345,9 @@ class ApnsPHP_Message
 		if (isset($this->_sText)) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
 		}
+		if (isset($this->_sActionLocKey) && isset($this->_sText)) {
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = array('body'=> (string)$this->_sText, 'action-loc-key'=>$this->_sActionLocKey );
+		}
 		if (isset($this->_nBadge) && $this->_nBadge >= 0) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->_nBadge;
 		}
@@ -434,6 +438,27 @@ class ApnsPHP_Message
 	public function getExpiry()
 	{
 		return $this->_nExpiryValue;
+	}
+	
+	/**
+	 * Set the action loc key.
+	 *
+	 * @param  $sActionLocKey @type string The action loc key displays in 
+	 * 		   the phone unlock slider, for example "slide to XXXXX"
+	 */
+	public function setActionLocKey($sActionLocKey)
+	{
+		$this->_sActionLocKey = $sActionLocKey;
+	}
+	
+	/**
+	 * Get the action loc key.
+	 *
+	 * @return @type string The action loc key value.
+	 */
+	public function getActionLocKey()
+	{
+		return $this->_sActionLocKey;
 	}
 
 	/**
