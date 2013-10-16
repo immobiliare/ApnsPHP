@@ -1,0 +1,15 @@
+{
+	"name": "apns-php/ApnsPHP",
+	"type": "library",
+	"description": "Apple Push Notification & Feedback Provider",
+	"keywords": ["APNS", "apple", "push", "notification"],
+	"homepage": "https://github.com/duccio/ApnsPHP",
+	"license": "LGPL-2.1",
+	"require": {
+		"php": ">=5.3.0",
+		"lib-openssl": "*"
+	},
+	"autoload": {
+        "files": ["ApnsPHP/Autoload.php"]
+    }
+}
