@@ -28,7 +28,7 @@ error_reporting(-1);
 // Using Autoload all classes are loaded on-demand
 require_once 'ApnsPHP/Autoload.php';
 
-// Instanciate a new ApnsPHP_Push object
+// Instantiate a new ApnsPHP_Push object
 $push = new ApnsPHP_Push(
 	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
