@@ -11,3 +11,5 @@ Packagist
 -------
 
 https://packagist.org/packages/duccio/apns-php
+
+Thanks @jbender! ;-)
