@@ -26,7 +26,7 @@ date_default_timezone_set('Europe/Rome');
 error_reporting(-1);
 
 // Using Autoload all classes are loaded on-demand
-require_once 'ApnsPHP/Autoload.php';
+require_once '../ApnsPHP/Autoload.php';
 
 // Instantiate a new ApnsPHP_Push object
 $push = new ApnsPHP_Push(
