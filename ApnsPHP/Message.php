@@ -339,21 +339,24 @@ class ApnsPHP_Message
 	 */
 	protected function _getPayload()
 	{
-		$aPayload[self::APPLE_RESERVED_NAMESPACE] = array();
-
+		$aPayload = array();
+		
+		$aAppleReserved = array();
 		if (isset($this->_sText)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
+			$aAppleReserved['alert'] = (string)$this->_sText;
 		}
 		if (isset($this->_nBadge) && $this->_nBadge >= 0) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->_nBadge;
+			$aAppleReserved['badge'] = (int)$this->_nBadge;
 		}
 		if (isset($this->_sSound)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['sound'] = (string)$this->_sSound;
+			$aAppleReserved['sound'] = (string)$this->_sSound;
 		}
 		if (isset($this->_bContentAvailable)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['content-available'] = (int)$this->_bContentAvailable;
+			$aAppleReserved['content-available'] = (int)$this->_bContentAvailable;
 		}
-
+		if (count($aAppleReserved))
+			$aPayload[self::APPLE_RESERVED_NAMESPACE] = $aAppleReserved;
+		
 		if (is_array($this->_aCustomProperties)) {
 			foreach($this->_aCustomProperties as $sPropertyName => $mPropertyValue) {
 				$aPayload[$sPropertyName] = $mPropertyValue;
@@ -380,11 +383,10 @@ class ApnsPHP_Message
 				$sJSON);
 		}
 
-		$sJSONPayload = str_replace(
-			'"' . self::APPLE_RESERVED_NAMESPACE . '":[]',
-			'"' . self::APPLE_RESERVED_NAMESPACE . '":{}',
-			$sJSON
-		);
+		if ($sJSON === '[]')
+			$sJSONPayload = '{}';
+		else
+			$sJSONPayload = $sJSON;
 		$nJSONPayloadLen = strlen($sJSONPayload);
 
 		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {

@@ -28,6 +28,8 @@
  */
 class ApnsPHP_Message_Custom extends ApnsPHP_Message
 {
+	const APPLE_ALERT_PROPERTY = 'alert'; /**< @type string The alert child property. */
+	
 	protected $_sActionLocKey; /**< @type string The "View" button title. */
 	protected $_sLocKey; /**< @type string A key to an alert-message string in a Localizable.strings file */
 	protected $_aLocArgs; /**< @type array Variable string values to appear in place of the format specifiers in loc-key. */
@@ -142,28 +144,26 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	{
 		$aPayload = parent::_getPayload();
 
-		$aPayload['aps']['alert'] = array();
-
+		$aAlert = array();
+	
 		if (isset($this->_sText) && !isset($this->_sLocKey)) {
-			$aPayload['aps']['alert']['body'] = (string)$this->_sText;
+			$aAlert['body'] = (string)$this->_sText;
 		}
-
 		if (isset($this->_sActionLocKey)) {
-			$aPayload['aps']['alert']['action-loc-key'] = $this->_sActionLocKey == '' ?
+			$aAlert['action-loc-key'] = $this->_sActionLocKey == '' ?
 				null : (string)$this->_sActionLocKey;
 		}
-
 		if (isset($this->_sLocKey)) {
-			$aPayload['aps']['alert']['loc-key'] = (string)$this->_sLocKey;
+			$aAlert['loc-key'] = (string)$this->_sLocKey;
 		}
-
 		if (isset($this->_aLocArgs)) {
-			$aPayload['aps']['alert']['loc-args'] = $this->_aLocArgs;
+			$aAlert['loc-args'] = $this->_aLocArgs;
 		}
-
 		if (isset($this->_sLaunchImage)) {
-			$aPayload['aps']['alert']['launch-image'] = (string)$this->_sLaunchImage;
+			$aAlert['launch-image'] = (string)$this->_sLaunchImage;
 		}
+		if (count($aAlert))
+			$aPayload[parent::APPLE_RESERVED_NAMESPACE][self::APPLE_ALERT_PROPERTY] = $aAlert;
 
 		return $aPayload;
 	}
