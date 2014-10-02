@@ -185,6 +185,26 @@ class ApnsPHP_Message
 	{
 		return $this->_sSound;
 	}
+	
+	/**
+	 * Set the category of notification
+	 *
+	 * @param  $sCategory @type string @optional A category for ios8 notification actions.
+	 */
+	public function setCategory($sCategory = '')
+	{
+		$this->_sCategory = $sCategory;
+	}
+
+	/**
+	 * Get the category of notification
+	 *
+	 * @return @type string The notification category
+	 */
+	public function getCategory()
+	{
+		return $this->_sCategory;
+	}
 
 	/**
 	 * Initiates the Newsstand background download.
@@ -352,6 +372,9 @@ class ApnsPHP_Message
 		}
 		if (isset($this->_bContentAvailable)) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['content-available'] = (int)$this->_bContentAvailable;
+		}
+		if (isset($this->_sCategory)) {
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['category'] = (string)$this->_sCategory;
 		}
 
 		if (is_array($this->_aCustomProperties)) {
