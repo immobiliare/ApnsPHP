@@ -34,6 +34,7 @@
 class ApnsPHP_Push_Server extends ApnsPHP_Push
 {
 	const MAIN_LOOP_USLEEP = 200000; /**< @type integer Main loop sleep time in micro seconds. */
+	const MAIN_LOOP_GRACE = 1800; /**< @type integer Main loop grace time in seconds. */
 	const SHM_SIZE = 524288; /**< @type integer Shared memory size in bytes useful to store message queues. */
 	const SHM_MESSAGES_QUEUE_KEY_START = 1000; /**< @type integer Message queue start identifier for messages. For every process 1 is added to this number. */
 	const SHM_ERROR_MESSAGES_QUEUE_KEY = 999; /**< @type integer Message queue identifier for not delivered messages. */
@@ -272,8 +273,25 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	protected function _mainLoop()
 	{
+		$last_message = time();
+
 		while (true) {
 			pcntl_signal_dispatch();
+
+			if ( $last_message<(time()-self::MAIN_LOOP_GRACE) ) {
+				$last_message = time();
+
+				try {
+					$this->_log('WARNING: reconnecting (Last message: '. strftime('%F %T', $last_message) .')...');
+
+					parent::disconnect();
+					usleep(self::MAIN_LOOP_USLEEP);
+					parent::connect();
+				} catch (ApnsPHP_Exception $e) {
+					$this->_log('ERROR: ' . $e->getMessage() . ', exiting...');
+					exit(1);
+				}
+			}
 
 			if (posix_getppid() != $this->_nParentPid) {
 				$this->_log("INFO: Parent process {$this->_nParentPid} died unexpectedly, exiting...");
@@ -287,6 +305,8 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 
 			$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
 			foreach($aQueue as $message) {
+				$last_message = time();
+
 				parent::add($message);
 			}
 			$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
