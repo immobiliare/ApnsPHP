@@ -43,6 +43,7 @@ class ApnsPHP_Message
 	protected $_sText; /**< @type string Alert message to display to the user. */
 	protected $_nBadge; /**< @type integer Number to badge the application icon with. */
 	protected $_sSound; /**< @type string Sound to play. */
+	protected $_sCategory; /**< @type string notification category. */
 	protected $_bContentAvailable; /**< @type boolean True to initiates the Newsstand background download. @see http://tinyurl.com/ApplePushNotificationNewsstand */
 
 	protected $_aCustomProperties; /**< @type mixed Custom properties container. */
@@ -184,6 +185,26 @@ class ApnsPHP_Message
 	public function getSound()
 	{
 		return $this->_sSound;
+	}
+	
+	/**
+	 * Set the category of notification
+	 *
+	 * @param  $sCategory @type string @optional A category for ios8 notification actions.
+	 */
+	public function setCategory($sCategory = '')
+	{
+		$this->_sCategory = $sCategory;
+	}
+
+	/**
+	 * Get the category of notification
+	 *
+	 * @return @type string The notification category
+	 */
+	public function getCategory()
+	{
+		return $this->_sCategory;
 	}
 
 	/**
@@ -352,6 +373,9 @@ class ApnsPHP_Message
 		}
 		if (isset($this->_bContentAvailable)) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['content-available'] = (int)$this->_bContentAvailable;
+		}
+		if (isset($this->_sCategory)) {
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['category'] = (string)$this->_sCategory;
 		}
 
 		if (is_array($this->_aCustomProperties)) {
