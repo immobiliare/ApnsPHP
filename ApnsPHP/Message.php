@@ -245,7 +245,7 @@ class ApnsPHP_Message
 	 */
 	public function setCustomProperty($sName, $mValue)
 	{
-		if ($sName == self::APPLE_RESERVED_NAMESPACE) {
+		if (trim($sName) == self::APPLE_RESERVED_NAMESPACE) {
 			throw new ApnsPHP_Message_Exception(
 				"Property name '" . self::APPLE_RESERVED_NAMESPACE . "' can not be used for custom property."
 			);
