@@ -42,8 +42,8 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 	const TOKEN_LENGTH_BINARY_SIZE = 2; /**< @type integer Token length binary size in bytes. */
 
 	protected $_aServiceURLs = array(
-		'ssl://feedback.push.apple.com:2196', // Production environment
-		'ssl://feedback.sandbox.push.apple.com:2196' // Sandbox environment
+		'tls://feedback.push.apple.com:2196', // Production environment
+		'tls://feedback.sandbox.push.apple.com:2196' // Sandbox environment
 	); /**< @type array Feedback URLs environments. */
 
 	protected $_aFeedback; /**< @type array Feedback container. */
