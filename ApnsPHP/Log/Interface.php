@@ -36,6 +36,47 @@ interface ApnsPHP_Log_Interface
 	 * Logs a message.
 	 *
 	 * @param  $sMessage @type string The message.
+	 * @param  $level @type int The log level.
 	 */
-	public function log($sMessage);
+	public function log($sMessage, $level);
+
+	/**
+	 * Set the minimum log level of messages that should be logged.
+	 */
+	public function getLogLevel();
+
+	/**
+	 * Sets the minimum log level of messages that should be logged.
+	 *
+	 * @param  $nLevel @type int The log level.
+	 */
+	public function setLogLevel($nLevel);
+
+	/**
+	 * Logs a status message.
+	 *
+	 * @param  $sMessage @type string The message.
+	 */
+	public function status($sMessage);
+
+	/**
+	 * Logs an info message.
+	 *
+	 * @param  $sMessage @type string The message.
+	 */
+	public function info($sMessage);
+
+	/**
+	 * Logs a warning message.
+	 *
+	 * @param  $sMessage @type string The message.
+	 */
+	public function warning($sMessage);
+
+	/**
+	 * Logs an error message.
+	 *
+	 * @param  $sMessage @type string The message.
+	 */
+	public function error($sMessage);
 }

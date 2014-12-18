@@ -96,6 +96,8 @@ abstract class ApnsPHP_Abstract
 		$this->_nWriteInterval = self::WRITE_INTERVAL;
 		$this->_nConnectRetryInterval = self::CONNECT_RETRY_INTERVAL;
 		$this->_nSocketSelectTimeout = self::SOCKET_SELECT_TIMEOUT;
+
+		$this->_logger = new ApnsPHP_Log_Embedded();
 	}
 
 	/**
@@ -190,7 +192,7 @@ abstract class ApnsPHP_Abstract
 	/**
 	 * Set the write interval.
 	 *
-	 * After each socket write operation we are sleeping for this 
+	 * After each socket write operation we are sleeping for this
 	 * time interval. To speed up the sending operations, use Zero
 	 * as parameter but some messages may be lost.
 	 *
@@ -333,12 +335,12 @@ abstract class ApnsPHP_Abstract
 			try {
 				$bConnected = $this->_connect();
 			} catch (ApnsPHP_Exception $e) {
-				$this->_log('ERROR: ' . $e->getMessage());
+				$this->_logger->error($e->getMessage());
 				if ($nRetry >= $this->_nConnectRetryTimes) {
 					throw $e;
 				} else {
-					$this->_log(
-						"INFO: Retry to connect (" . ($nRetry+1) .
+					$this->_logger->info(
+						"Retry to connect (" . ($nRetry+1) .
 						"/{$this->_nConnectRetryTimes})..."
 					);
 					usleep($this->_nConnectRetryInterval);
@@ -356,7 +358,7 @@ abstract class ApnsPHP_Abstract
 	public function disconnect()
 	{
 		if (is_resource($this->_hSocket)) {
-			$this->_log('INFO: Disconnected.');
+			$this->_logger->info('Disconnected.');
 			return fclose($this->_hSocket);
 		}
 		return false;
@@ -373,7 +375,7 @@ abstract class ApnsPHP_Abstract
 		$sURL = $this->_aServiceURLs[$this->_nEnvironment];
 		unset($aURLs);
 
-		$this->_log("INFO: Trying {$sURL}...");
+		$this->_logger->info("Trying {$sURL}...");
 
 		/**
 		 * @see http://php.net/manual/en/context.ssl.php
@@ -401,21 +403,8 @@ abstract class ApnsPHP_Abstract
 		stream_set_blocking($this->_hSocket, 0);
 		stream_set_write_buffer($this->_hSocket, 0);
 
-		$this->_log("INFO: Connected to {$sURL}.");
+		$this->_logger->info("Connected to {$sURL}.");
 
 		return true;
-	}
-
-	/**
-	 * Logs a message through the Logger.
-	 *
-	 * @param  $sMessage @type string The message.
-	 */
-	protected function _log($sMessage)
-	{
-		if (!isset($this->_logger)) {
-			$this->_logger = new ApnsPHP_Log_Embedded();
-		}
-		$this->_logger->log($sMessage);
 	}
 }
