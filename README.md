@@ -8,6 +8,8 @@ However if you prefer to use TLS you can change URLs in $_aServiceURLs in Push.p
 
 Apple has already removed SSLv3 support in the Sandbox Env. so, please, try ApnsPHP with Sandbox servers (in ssl:// or tls:// mode, if you want).
 
+2015-05-07 Update: ApnsPHP is now using TLS protocol.
+
 ApnsPHP
 =======
 
