@@ -1,7 +1,7 @@
 ApnsPHP: Apple Push Notification & Feedback Provider
 ==========================
 
-A **full **set of *open source* PHP classes to interact with the **Apple Push Notification service** for the iPhone, iPad and the iPod Touch.
+A **full set** of *open source* PHP classes to interact with the **Apple Push Notification service** for the iPhone, iPad and the iPod Touch.
 
 - [Sample PHP Push code](sample_push.php)
 - [Sample PHP Feedback code](sample_feedback.php)
