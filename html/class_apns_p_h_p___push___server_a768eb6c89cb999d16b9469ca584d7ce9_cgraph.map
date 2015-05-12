@@ -1,4 +1,4 @@
 <map id="getErrors" name="getErrors">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___push___server.html#add4bfc6ebbbdbf02245ec8c9d4d53593" title="Returns the queue from the shared memory. " alt="" coords="112,5,179,27"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___push___server.html#aa3dbe08278a5b33b48530f30e2b2872e" title="Store the queue into the shared memory. " alt="" coords="112,51,179,74"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___push___server.html#add4bfc6ebbbdbf02245ec8c9d4d53593" title="Returns the queue from the shared memory. " alt="" coords="129,5,213,29"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push___server.html#aa3dbe08278a5b33b48530f30e2b2872e" title="Store the queue into the shared memory. " alt="" coords="129,53,212,77"/>
 </map>

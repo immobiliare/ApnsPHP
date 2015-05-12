@@ -1,5 +1,5 @@
 <map id="ApnsPHP_Abstract" name="ApnsPHP_Abstract">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___feedback.html" title="The Feedback Service client. " alt="" coords="5,510,171,618"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html" title="The Push Notification Provider. " alt="" coords="196,430,364,698"/>
-<area shape="rect" id="node4" href="$class_apns_p_h_p___push___server.html" title="The Push Notification Server Provider. " alt="" coords="209,747,349,1069"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___feedback.html" title="The Feedback Service client. " alt="" coords="5,563,216,680"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html" title="The Push Notification Provider. " alt="" coords="241,473,452,770"/>
+<area shape="rect" id="node4" href="$class_apns_p_h_p___push___server.html" title="The Push Notification Server Provider. " alt="" coords="257,819,436,1176"/>
 </map>

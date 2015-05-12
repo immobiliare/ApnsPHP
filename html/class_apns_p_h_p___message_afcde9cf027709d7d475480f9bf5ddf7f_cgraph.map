@@ -1,4 +1,4 @@
 <map id="__toString" name="__toString">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___message.html#a078da3f5c17bd3a909a6d46af58b4879" title="Convert the message in a JSON&#45;encoded payload. " alt="" coords="117,5,184,27"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___message.html#a53ac522f77fabca771da91294220be5d" title="Get the payload dictionary. " alt="" coords="232,5,304,27"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___message.html#a078da3f5c17bd3a909a6d46af58b4879" title="Convert the message in a JSON&#45;encoded payload. " alt="" coords="136,5,221,29"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___message.html#a53ac522f77fabca771da91294220be5d" title="Get the payload dictionary. " alt="" coords="270,5,362,29"/>
 </map>

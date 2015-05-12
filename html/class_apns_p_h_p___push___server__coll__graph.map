@@ -1,5 +1,5 @@
 <map id="ApnsPHP_Push_Server" name="ApnsPHP_Push_Server">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html" title="The Push Notification Provider. " alt="" coords="5,547,173,815"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___abstract.html" title="Abstract class: this is the superclass for all Apple Push Notification Service classes. " alt="" coords="8,131,171,495"/>
-<area shape="rect" id="node4" href="$interface_apns_p_h_p___log___interface.html" title="The Log Interface. " alt="" coords="29,6,149,71"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html" title="The Push Notification Provider. " alt="" coords="13,593,224,890"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___abstract.html" title="Abstract class: this is the superclass for all Apple Push Notification Service classes. " alt="" coords="5,136,232,541"/>
+<area shape="rect" id="node4" href="$interface_apns_p_h_p___log___interface.html" title="The Log Interface. " alt="" coords="39,5,197,75"/>
 </map>

@@ -1,4 +1,4 @@
 <map id="getQueue" name="getQueue">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___push___server.html#add4bfc6ebbbdbf02245ec8c9d4d53593" title="Returns the queue from the shared memory. " alt="" coords="117,5,184,27"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___push___server.html#aa3dbe08278a5b33b48530f30e2b2872e" title="Store the queue into the shared memory. " alt="" coords="117,51,184,74"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___push___server.html#add4bfc6ebbbdbf02245ec8c9d4d53593" title="Returns the queue from the shared memory. " alt="" coords="131,5,215,29"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push___server.html#aa3dbe08278a5b33b48530f30e2b2872e" title="Store the queue into the shared memory. " alt="" coords="132,53,215,77"/>
 </map>

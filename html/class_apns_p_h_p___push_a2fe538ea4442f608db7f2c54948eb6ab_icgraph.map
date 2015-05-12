@@ -1,4 +1,4 @@
 <map id="_readErrorMessage" name="_readErrorMessage">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html#a6242fa2edfb97a92aea050f0f119da7d" title="Checks for error message and deletes messages successfully sent from message queue. " alt="" coords="155,5,237,27"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html#ae9399f5ec7881c5d18173def8068108e" title="Sends all messages in the message queue to Apple Push Notification Service. " alt="" coords="286,5,327,27"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html#a6242fa2edfb97a92aea050f0f119da7d" title="Checks for error message and deletes messages successfully sent from message queue. " alt="" coords="187,5,293,29"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html#ae9399f5ec7881c5d18173def8068108e" title="Sends all messages in the message queue to Apple Push Notification Service. " alt="" coords="342,5,391,29"/>
 </map>
