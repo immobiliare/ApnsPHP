@@ -1,0 +1,5 @@
+<map id="_connect" name="_connect">
+<area shape="rect" id="node2" href="$class_apns_p_h_p___abstract.html#a1396bf9b5defe9fa844a63b5cd40ac0e" title="Connects to Apple Push Notification service server. " alt="" coords="115,5,170,27"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html#a6242fa2edfb97a92aea050f0f119da7d" title="Checks for error message and deletes messages successfully sent from message queue. " alt="" coords="219,5,365,27"/>
+<area shape="rect" id="node4" href="$class_apns_p_h_p___push.html#ae9399f5ec7881c5d18173def8068108e" title="Sends all messages in the message queue to Apple Push Notification Service. " alt="" coords="413,5,520,27"/>
+</map>

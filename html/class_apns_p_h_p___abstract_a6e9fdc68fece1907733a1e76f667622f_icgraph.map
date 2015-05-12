@@ -1,0 +1,12 @@
+<map id="_log" name="_log">
+<area shape="rect" id="node2" href="$class_apns_p_h_p___abstract.html#a56e16b11db21be37c5f50850d287ff21" title="Connects to Apple Push Notification service server. " alt="" coords="131,96,191,118"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___abstract.html#a1396bf9b5defe9fa844a63b5cd40ac0e" title="Connects to Apple Push Notification service server. " alt="" coords="309,96,363,118"/>
+<area shape="rect" id="node4" href="$class_apns_p_h_p___push.html#a6242fa2edfb97a92aea050f0f119da7d" title="Checks for error message and deletes messages successfully sent from message queue. " alt="" coords="443,72,589,94"/>
+<area shape="rect" id="node5" href="$class_apns_p_h_p___push.html#ae9399f5ec7881c5d18173def8068108e" title="Sends all messages in the message queue to Apple Push Notification Service. " alt="" coords="637,189,744,212"/>
+<area shape="rect" id="node6" href="$class_apns_p_h_p___push___server.html#a8ef2832f45586e32845c0d866d9e96cf" title="The process main loop. " alt="" coords="103,245,219,278"/>
+<area shape="rect" id="node7" href="$class_apns_p_h_p___push___server.html#a60de64d75454385b23995437f1d72669" title="Starts the server forking all processes and return immediately. " alt="" coords="278,218,394,252"/>
+<area shape="rect" id="node8" href="$class_apns_p_h_p___abstract.html#a7df1b1c18902634d60f5fb06d3c5f4a9" title="Disconnects from Apple Push Notifications service server. " alt="" coords="303,48,369,70"/>
+<area shape="rect" id="node9" href="$class_apns_p_h_p___push___server.html#a43459575d6a948917ed75d899660ddc5" title="When the parent process exits, cleans shared memory and semaphore. " alt="" coords="103,354,219,388"/>
+<area shape="rect" id="node10" href="$class_apns_p_h_p___push___server.html#a68866943ec8207ba552e5fe306b6abd7" title="When a child (not the parent) receive a signal of type TERM, QUIT or INT exits from the current proce..." alt="" coords="103,412,219,445"/>
+<area shape="rect" id="node11" href="$class_apns_p_h_p___feedback.html#ab391f567994c7c41c08c66f5e4492646" title="Receives feedback tuples from Apple Push Notification Service feedback. " alt="" coords="93,469,229,492"/>
+</map>

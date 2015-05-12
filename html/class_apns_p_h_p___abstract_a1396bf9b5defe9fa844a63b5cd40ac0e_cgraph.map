@@ -1,0 +1,4 @@
+<map id="connect" name="connect">
+<area shape="rect" id="node2" href="$class_apns_p_h_p___abstract.html#a56e16b11db21be37c5f50850d287ff21" title="Connects to Apple Push Notification service server. " alt="" coords="110,5,170,27"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___abstract.html#a6e9fdc68fece1907733a1e76f667622f" title="Logs a message through the Logger. " alt="" coords="219,30,258,53"/>
+</map>

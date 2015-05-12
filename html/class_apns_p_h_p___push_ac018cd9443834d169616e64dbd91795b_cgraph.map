@@ -1,0 +1,8 @@
+<map id="add" name="add">
+<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html#afcfd2fc4859336fbbcb68b15bfac7ca1" title="Generate a binary notification from a device token and a JSON&#45;encoded payload. " alt="" coords="118,5,229,27"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___message.html#a7f95765acd4da6daa3b26a50906d49c9" title="Get the expiry value. " alt="" coords="103,51,243,74"/>
+<area shape="rect" id="node4" href="$class_apns_p_h_p___message.html#a078da3f5c17bd3a909a6d46af58b4879" title="Convert the message in a JSON&#45;encoded payload. " alt="" coords="99,98,247,121"/>
+<area shape="rect" id="node6" href="$class_apns_p_h_p___message.html#a46f33ab42d194e1b7a108f2fb287627b" title="Get a recipient. " alt="" coords="96,145,251,167"/>
+<area shape="rect" id="node7" href="$class_apns_p_h_p___message.html#ae6c898739424a186c74c6d8541fbb5f5" title="Get the number of recipients. " alt="" coords="94,191,253,225"/>
+<area shape="rect" id="node5" href="$class_apns_p_h_p___message.html#a53ac522f77fabca771da91294220be5d" title="Get the payload dictionary. " alt="" coords="302,98,455,121"/>
+</map>

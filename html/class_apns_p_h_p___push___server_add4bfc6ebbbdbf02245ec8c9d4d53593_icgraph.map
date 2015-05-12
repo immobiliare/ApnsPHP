@@ -1,0 +1,7 @@
+<map id="_getQueue" name="_getQueue">
+<area shape="rect" id="node2" href="$class_apns_p_h_p___push___server.html#a8ef2832f45586e32845c0d866d9e96cf" title="The process main loop. " alt="" coords="120,5,187,27"/>
+<area shape="rect" id="node4" href="$class_apns_p_h_p___push___server.html#ac018cd9443834d169616e64dbd91795b" title="Adds a message to the inter&#45;process message queue. " alt="" coords="134,51,173,74"/>
+<area shape="rect" id="node5" href="$class_apns_p_h_p___push___server.html#a768eb6c89cb999d16b9469ca584d7ce9" title="Returns messages not delivered to the end user because one (or more) error occurred. " alt="" coords="124,98,183,121"/>
+<area shape="rect" id="node6" href="$class_apns_p_h_p___push___server.html#a28cb5e78a1805b9a1b643142033dc23b" title="Returns messages in the message queue. " alt="" coords="122,145,185,167"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push___server.html#a60de64d75454385b23995437f1d72669" title="Starts the server forking all processes and return immediately. " alt="" coords="235,5,275,27"/>
+</map>

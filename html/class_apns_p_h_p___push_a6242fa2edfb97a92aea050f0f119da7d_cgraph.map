@@ -1,0 +1,8 @@
+<map id="_updateQueue" name="_updateQueue">
+<area shape="rect" id="node2" href="$class_apns_p_h_p___abstract.html#a6e9fdc68fece1907733a1e76f667622f" title="Logs a message through the Logger. " alt="" coords="515,125,634,147"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html#a2fe538ea4442f608db7f2c54948eb6ab" title="Reads an error message (if present) from the main stream. " alt="" coords="153,51,255,74"/>
+<area shape="rect" id="node5" href="$class_apns_p_h_p___abstract.html#a1396bf9b5defe9fa844a63b5cd40ac0e" title="Connects to Apple Push Notification service server. " alt="" coords="137,99,271,122"/>
+<area shape="rect" id="node7" href="$class_apns_p_h_p___abstract.html#a7df1b1c18902634d60f5fb06d3c5f4a9" title="Disconnects from Apple Push Notifications service server. " alt="" coords="321,195,466,218"/>
+<area shape="rect" id="node4" href="$class_apns_p_h_p___push.html#a381cee411cee3e7d1c3220fa45d47eb2" title="Parses the error message. " alt="" coords="341,50,446,73"/>
+<area shape="rect" id="node6" href="$class_apns_p_h_p___abstract.html#a56e16b11db21be37c5f50850d287ff21" title="Connects to Apple Push Notification service server. " alt="" coords="324,149,463,171"/>
+</map>
