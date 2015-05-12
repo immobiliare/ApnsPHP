@@ -20,7 +20,7 @@
 /**
  * @mainpage
  *
- * @li ApnsPHP on Google Code: http://apns-php.googlecode.com/
+ * @li ApnsPHP on GitHub: https://github.com/immobiliare/ApnsPHP
  */
 
 /**
