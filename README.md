@@ -7,7 +7,7 @@ A **full set** of *open source* PHP classes to interact with the **Apple Push No
 - [Sample PHP Feedback code](sample_feedback.php)
 - [Sample PHP Server code](sample_server.php)
 - [Sample Objective-C device code](Objective-C%20Demo/)
-- [Full APIs Documentation](http://apns-php.googlecode.com/svn/reference/index.html)
+- [Full APIs Documentation](http://immobiliare.github.io/ApnsPHP/html/index.html)
 - [How to generate a Push Notification certificate and download the Entrust Root Authority certificate](Doc/CertificateCreation.md)
 
 News
@@ -44,9 +44,9 @@ Architecture
 Classes hierarchy
 ------------
 
-![](http://apns-php.googlecode.com/svn/images/classes1.png)
-![](http://apns-php.googlecode.com/svn/images/classes2.png)
-![](http://apns-php.googlecode.com/svn/images/classes3.png)
+![](http://immobiliare.github.io/ApnsPHP/images/classes1.png)
+![](http://immobiliare.github.io/ApnsPHP/images/classes2.png)
+![](http://immobiliare.github.io/ApnsPHP/images/classes3.png)
 
 
 Details
