@@ -1,4 +1,4 @@
-ApnsPHP: Apple Push Notification & Feedback Provider
+<img src="http://immobiliare.github.io/ApnsPHP/images/logo.png" width="48"> ApnsPHP: Apple Push Notification & Feedback Provider
 ==========================
 
 A **full set** of *open source* PHP classes to interact with the **Apple Push Notification service** for the iPhone, iPad and the iPod Touch.
