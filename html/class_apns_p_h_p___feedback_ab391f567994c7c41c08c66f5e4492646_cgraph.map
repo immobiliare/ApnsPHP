@@ -1,4 +1,4 @@
 <map id="receive" name="receive">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___abstract.html#a6e9fdc68fece1907733a1e76f667622f" title="Logs a message through the Logger. " alt="" coords="117,5,272,29"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___feedback.html#a2a912ccb0fc02911001a99eb6559b4c5" title="Parses binary tuples. " alt="" coords="130,53,259,77"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___abstract.html#a6e9fdc68fece1907733a1e76f667622f" title="Logs a message through the Logger. " alt="" coords="117,5,277,29"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___feedback.html#a2a912ccb0fc02911001a99eb6559b4c5" title="Parses binary tuples. " alt="" coords="133,53,262,77"/>
 </map>

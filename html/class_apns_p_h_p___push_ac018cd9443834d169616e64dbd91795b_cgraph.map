@@ -1,8 +1,8 @@
 <map id="add" name="add">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html#afcfd2fc4859336fbbcb68b15bfac7ca1" title="Generate a binary notification from a device token and a JSON&#45;encoded payload. " alt="" coords="128,5,275,29"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___message.html#a7f95765acd4da6daa3b26a50906d49c9" title="Get the expiry value. " alt="" coords="108,53,295,77"/>
-<area shape="rect" id="node4" href="$class_apns_p_h_p___message.html#a078da3f5c17bd3a909a6d46af58b4879" title="Convert the message in a JSON&#45;encoded payload. " alt="" coords="103,101,299,125"/>
-<area shape="rect" id="node6" href="$class_apns_p_h_p___message.html#a46f33ab42d194e1b7a108f2fb287627b" title="Get a recipient. " alt="" coords="100,149,303,173"/>
-<area shape="rect" id="node7" href="$class_apns_p_h_p___message.html#ae6c898739424a186c74c6d8541fbb5f5" title="Get the number of recipients. " alt="" coords="97,198,306,234"/>
-<area shape="rect" id="node5" href="$class_apns_p_h_p___message.html#a53ac522f77fabca771da91294220be5d" title="Get the payload dictionary. " alt="" coords="355,101,557,125"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html#afcfd2fc4859336fbbcb68b15bfac7ca1" title="Generate a binary notification from a device token and a JSON&#45;encoded payload. " alt="" coords="131,5,277,29"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___message.html#a7f95765acd4da6daa3b26a50906d49c9" title="Get the expiry value. " alt="" coords="108,53,300,77"/>
+<area shape="rect" id="node4" href="$class_apns_p_h_p___message.html#a078da3f5c17bd3a909a6d46af58b4879" title="Convert the message in a JSON&#45;encoded payload. " alt="" coords="103,101,305,125"/>
+<area shape="rect" id="node6" href="$class_apns_p_h_p___message.html#a46f33ab42d194e1b7a108f2fb287627b" title="Get a recipient. " alt="" coords="100,149,308,173"/>
+<area shape="rect" id="node7" href="$class_apns_p_h_p___message.html#ae6c898739424a186c74c6d8541fbb5f5" title="Get the number of recipients. " alt="" coords="97,198,311,234"/>
+<area shape="rect" id="node5" href="$class_apns_p_h_p___message.html#a53ac522f77fabca771da91294220be5d" title="Get the payload dictionary. " alt="" coords="360,101,568,125"/>
 </map>

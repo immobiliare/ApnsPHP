@@ -1,4 +1,4 @@
 <map id="disconnect" name="disconnect">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html#a6242fa2edfb97a92aea050f0f119da7d" title="Checks for error message and deletes messages successfully sent from message queue. " alt="" coords="136,5,331,29"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html#ae9399f5ec7881c5d18173def8068108e" title="Sends all messages in the message queue to Apple Push Notification Service. " alt="" coords="379,5,517,29"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___push.html#a6242fa2edfb97a92aea050f0f119da7d" title="Checks for error message and deletes messages successfully sent from message queue. " alt="" coords="137,5,335,29"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html#ae9399f5ec7881c5d18173def8068108e" title="Sends all messages in the message queue to Apple Push Notification Service. " alt="" coords="385,5,527,29"/>
 </map>

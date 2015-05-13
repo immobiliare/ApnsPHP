@@ -1,4 +1,4 @@
 <map id="getPayload" name="getPayload">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___message.html#afcde9cf027709d7d475480f9bf5ddf7f" title="PHP Magic Method. " alt="" coords="165,5,246,29"/>
-<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html#ac018cd9443834d169616e64dbd91795b" title="Adds a message to the message queue. " alt="" coords="139,53,271,77"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___message.html#afcde9cf027709d7d475480f9bf5ddf7f" title="PHP Magic Method. " alt="" coords="167,5,249,29"/>
+<area shape="rect" id="node3" href="$class_apns_p_h_p___push.html#ac018cd9443834d169616e64dbd91795b" title="Adds a message to the message queue. " alt="" coords="139,53,277,77"/>
 </map>

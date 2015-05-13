@@ -1,6 +1,6 @@
 <map id="start" name="start">
-<area shape="rect" id="node2" href="$class_apns_p_h_p___abstract.html#a6e9fdc68fece1907733a1e76f667622f" title="Logs a message through the Logger. " alt="" coords="235,5,389,29"/>
+<area shape="rect" id="node2" href="$class_apns_p_h_p___abstract.html#a6e9fdc68fece1907733a1e76f667622f" title="Logs a message through the Logger. " alt="" coords="235,5,395,29"/>
 <area shape="rect" id="node3" href="$class_apns_p_h_p___push___server.html#a8ef2832f45586e32845c0d866d9e96cf" title="The process main loop. " alt="" coords="102,55,186,79"/>
-<area shape="rect" id="node4" href="$class_apns_p_h_p___push___server.html#add4bfc6ebbbdbf02245ec8c9d4d53593" title="Returns the queue from the shared memory. " alt="" coords="270,53,354,77"/>
-<area shape="rect" id="node5" href="$class_apns_p_h_p___push___server.html#aa3dbe08278a5b33b48530f30e2b2872e" title="Store the queue into the shared memory. " alt="" coords="271,101,353,125"/>
+<area shape="rect" id="node4" href="$class_apns_p_h_p___push___server.html#add4bfc6ebbbdbf02245ec8c9d4d53593" title="Returns the queue from the shared memory. " alt="" coords="273,53,357,77"/>
+<area shape="rect" id="node5" href="$class_apns_p_h_p___push___server.html#aa3dbe08278a5b33b48530f30e2b2872e" title="Store the queue into the shared memory. " alt="" coords="273,101,356,125"/>
 </map>
