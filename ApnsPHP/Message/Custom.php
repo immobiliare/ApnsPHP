@@ -32,6 +32,7 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	protected $_sLocKey; /**< @type string A key to an alert-message string in a Localizable.strings file */
 	protected $_aLocArgs; /**< @type array Variable string values to appear in place of the format specifiers in loc-key. */
 	protected $_sLaunchImage; /**< @type string The filename of an image file in the application bundle. */
+	protected $_sTitle; /**< @type string The title of an short looknotification displayed on Apple Watch. */
 
 	/**
 	 * Set the "View" button title.
@@ -133,6 +134,29 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 		return $this->_sLaunchImage;
 	}
 
+    /**
+	 * Set the title of a short look Apple Watch notification.
+	 *
+	 * Currently only used when displaying notifications on Apple Watch.
+	 * See https://developer.apple.com/library/ios/documentation/General/Conceptual/WatchKitProgrammingGuide/BasicSupport.html#//apple_ref/doc/uid/TP40014969-CH18-SW2
+	 *
+	 * @param  $sTitle @type string The title displayed in the short look notification
+	 */
+	public function setTitle($sTitle)
+	{
+		$this->_sTitle = $sTitle;
+	}
+
+	/**
+	 * Get the title of a short look Apple Watch notification.
+	 *
+	 * @return @type string The title displayed in the short look notification
+	 */
+	public function getTitle()
+	{
+		return $this->_sTitle;
+	}
+
 	/**
 	 * Get the payload dictionary.
 	 *
@@ -163,6 +187,10 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 
 		if (isset($this->_sLaunchImage)) {
 			$aPayload['aps']['alert']['launch-image'] = (string)$this->_sLaunchImage;
+		}
+
+		if (isset($this->_sTitle)) {
+			$aPayload['aps']['alert']['title'] = (string)$this->_sTitle;
 		}
 
 		return $aPayload;
