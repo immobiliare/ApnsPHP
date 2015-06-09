@@ -39,6 +39,8 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 
 	const STATUS_CODE_INTERNAL_ERROR = 999; /**< @type integer Status code for internal error (not Apple). */
 
+	protected $_bServerMode = false; /** @type boolean Server mode sends a pcntl_signal_dispatch on send method. Used by ApnsPHP_Push_Server */
+
 	protected $_aErrorResponseMessages = array(
 		0   => 'No errors encountered',
 		1   => 'Processing error',
@@ -138,7 +140,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 
 			$bError = false;
 			foreach($this->_aMessageQueue as $k => &$aMessage) {
-				if (function_exists('pcntl_signal_dispatch')) {
+				if ($this->_bServerMode && function_exists('pcntl_signal_dispatch')) {
 					pcntl_signal_dispatch();
 				}
 
