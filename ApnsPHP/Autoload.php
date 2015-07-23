@@ -30,26 +30,28 @@
  * @throws Exception if class name is empty, the current path is empty or class
  *         file does not exists or file was loaded but class name was not found.
  */
-function ApnsPHP_Autoload($sClassName)
+if(!function_exists('ApnsPHP_Autoload'))
 {
-	if (empty($sClassName)) {
-		throw new Exception('Class name is empty');
-	}
-
-	$sPath = dirname(dirname(__FILE__));
-	if (empty($sPath)) {
-		throw new Exception('Current path is empty');
-	}
-
-	$sFile = sprintf('%s%s%s.php',
-		$sPath, DIRECTORY_SEPARATOR,
-		str_replace('_', DIRECTORY_SEPARATOR, $sClassName)
-	);
-	if (is_file($sFile) && is_readable($sFile)) {
-		require_once $sFile;
+	function ApnsPHP_Autoload($sClassName)
+	{
+		if (empty($sClassName)) {
+			throw new Exception('Class name is empty');
+		}
+	
+		$sPath = dirname(dirname(__FILE__));
+		if (empty($sPath)) {
+			throw new Exception('Current path is empty');
+		}
+	
+		$sFile = sprintf('%s%s%s.php',
+			$sPath, DIRECTORY_SEPARATOR,
+			str_replace('_', DIRECTORY_SEPARATOR, $sClassName)
+		);
+		if (is_file($sFile) && is_readable($sFile)) {
+			require_once $sFile;
+		}
 	}
 }
-
 // If your code has an existing __autoload function then this function must be explicitly registered on the __autoload stack.
 // (PHP Documentation for spl_autoload_register [@see http://php.net/spl_autoload_register])
 if (function_exists('__autoload')) {
