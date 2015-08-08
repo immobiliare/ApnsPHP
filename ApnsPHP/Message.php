@@ -126,7 +126,7 @@ class ApnsPHP_Message
 	 */
 	public function setText($title, $body = null)
 	{
-		$this->_sText = !$body ? compact("title", "body") : $title;
+		$this->_sText = !$body ? $title : compact("title", "body");
 	}
 
 	/**
