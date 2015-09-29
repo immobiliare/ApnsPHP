@@ -1,4 +1,4 @@
-[![Total Downloads](https://poser.pugx.org/duccio/apns-php/downloads)](https://packagist.org/packages/duccio/apns-php) [![Monthly Downloads](https://poser.pugx.org/duccio/apns-php/d/monthly)](https://packagist.org/packages/duccio/apns-php) [![Daily Downloads](https://poser.pugx.org/duccio/apns-php/d/daily)](https://packagist.org/packages/duccio/apns-php) [![License](https://poser.pugx.org/duccio/apns-php/license)](https://packagist.org/packages/duccio/apns-php)
+<p align="center">[![Total Downloads](https://poser.pugx.org/duccio/apns-php/downloads)](https://packagist.org/packages/duccio/apns-php) [![Monthly Downloads](https://poser.pugx.org/duccio/apns-php/d/monthly)](https://packagist.org/packages/duccio/apns-php) [![Daily Downloads](https://poser.pugx.org/duccio/apns-php/d/daily)](https://packagist.org/packages/duccio/apns-php) [![License](https://poser.pugx.org/duccio/apns-php/license)](https://packagist.org/packages/duccio/apns-php)</p>
 
 <img src="http://immobiliare.github.io/ApnsPHP/images/logo.png" width="48"> ApnsPHP: Apple Push Notification & Feedback Provider
 ==========================
