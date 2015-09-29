@@ -1,12 +1,12 @@
+<img src="http://immobiliare.github.io/ApnsPHP/images/logo.png" width="48"> ApnsPHP: Apple Push Notification & Feedback Provider
+==========================
+
 <p align="center">
 	<img src="https://poser.pugx.org/duccio/apns-php/downloads">
 	<img src="https://poser.pugx.org/duccio/apns-php/d/monthly">
 	<img src="https://poser.pugx.org/duccio/apns-php/d/daily">
 	<img src="https://poser.pugx.org/duccio/apns-php/license">
 </p>
-
-<img src="http://immobiliare.github.io/ApnsPHP/images/logo.png" width="48"> ApnsPHP: Apple Push Notification & Feedback Provider
-==========================
 
 A **full set** of *open source* PHP classes to interact with the **Apple Push Notification service** for the iPhone, iPad and the iPod Touch.
 
