@@ -57,6 +57,8 @@ abstract class ApnsPHP_Abstract
 
 	protected $_sProviderCertificateFile; /**< @type string Provider certificate file with key (Bundled PEM). */
 	protected $_sProviderCertificatePassphrase; /**< @type string Provider certificate passphrase. */
+
+	protected $_sRootCertificationAuthorityPath; /**< @type string Root certification path. */
 	protected $_sRootCertificationAuthorityFile; /**< @type string Root certification authority file. */
 
 	protected $_nWriteInterval; /**< @type integer Write interval in micro seconds. */
@@ -185,6 +187,21 @@ abstract class ApnsPHP_Abstract
 	public function getCertificateAuthority()
 	{
 		return $this->_sRootCertificationAuthorityFile;
+	}
+
+	public function setRootCertificationAuthorityPath($sRootCertificationAuthorityPath)
+	{
+		if (!is_readable($sRootCertificationAuthorityPath)) {
+			throw new ApnsPHP_Exception(
+				"Unable to read Certificate Authority file '{$sRootCertificationAuthorityPath}'"
+			);
+		}
+		$this->_sRootCertificationAuthorityPath = $sRootCertificationAuthorityPath;
+	}
+
+	public function getCertificateAuthorityPath()
+	{
+		return $this->_sRootCertificationAuthorityPath;
 	}
 
 	/**
@@ -381,6 +398,7 @@ abstract class ApnsPHP_Abstract
 		$streamContext = stream_context_create(array('ssl' => array(
 			'verify_peer' => isset($this->_sRootCertificationAuthorityFile),
 			'cafile' => $this->_sRootCertificationAuthorityFile,
+			'capath' => $this->_sRootCertificationAuthorityPath,
 			'local_cert' => $this->_sProviderCertificateFile
 		)));
 
