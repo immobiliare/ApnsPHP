@@ -397,7 +397,7 @@ abstract class ApnsPHP_Abstract
 		 */
 		$streamContext = stream_context_create(array('ssl' => array(
 			'verify_peer' => isset($this->_sRootCertificationAuthorityFile),
-			'cafile' => $this->_sRootCertificationAuthorityFile,
+			// 'cafile' => $this->_sRootCertificationAuthorityFile,
 			'capath' => $this->_sRootCertificationAuthorityPath,
 			'local_cert' => $this->_sProviderCertificateFile
 		)));
