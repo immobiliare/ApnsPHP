@@ -36,6 +36,10 @@
   application.applicationIconBadgeNumber = 0;
   self.textView.text = [launchOptions description];
   
+  self.viewController = [[UIViewController alloc] initWithNibName:nil
+                                                           bundle:nil];
+  self.window.rootViewController = self.viewController;
+
   return YES;
 }
 
@@ -80,6 +84,7 @@
 #pragma mark Memory management
 
 - (void)dealloc {
+    [viewController release];
     [window release];
     [super dealloc];
 }
