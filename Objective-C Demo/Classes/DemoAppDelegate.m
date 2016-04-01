@@ -20,7 +20,7 @@
 
 @implementation DemoAppDelegate
 
-@synthesize window, textView;
+@synthesize window, textView, viewController;
 
 #pragma mark -
 #pragma mark Application lifecycle
