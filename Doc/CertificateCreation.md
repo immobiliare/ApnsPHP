@@ -10,7 +10,7 @@ To generate a certificate on a **Mac OS X**:
 
 1. Log-in to the [iPhone Developer Program Portal](http://developer.apple.com/iphone/manage/overview/index.action)
 1. Choose **App IDs** from the menu on the right ([or click here](http://developer.apple.com/iphone/manage/bundles/index.action))
-1. Create an App ID without a wildcard. For example `3L223ZX9Y3.com.immobiliare.test`
+1. Create an App ID without a wildcard. For example `3L223ZX9Y3.it.immobiliare.labs.apnsphp`
 1. Click the **Configure** link next to this App ID and then click on the button to start the wizard to generate a new **Development Push SSL Certificate** ([Apple Documentation: Creating the SSL Certificate and Keys](http://developer.apple.com/iphone/library/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ProvisioningDevelopment/ProvisioningDevelopment.html#//apple_ref/doc/uid/TP40008194-CH104-SW4))
 1. Download this certificate and double click on `aps_developer_identity.cer` to import it into your Keychain
 1. Launch **Keychain Assistant** (located in Application, Utilities or search for it with Spotlight) and click on My Certificates on the left
