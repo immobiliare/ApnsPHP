@@ -168,7 +168,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 					}
 				}
 
-				$nLen = strlen($aMessage['BINARY_NOTIFICATION']);
+				$nLen = preg_match_all( '(.)su', $aMessage['BINARY_NOTIFICATION'], $matches );
 				$this->_log("STATUS: Sending message ID {$k} {$sCustomIdentifier} (" . ($nErrors + 1) . "/{$this->_nSendRetryTimes}): {$nLen} bytes.");
 
 				$aErrorMessage = null;
