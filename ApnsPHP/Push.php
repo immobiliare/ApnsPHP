@@ -52,12 +52,30 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		self::STATUS_CODE_INTERNAL_ERROR => 'Internal error'
 	); /**< @type array Error-response messages. */
 
+	protected $_aHTTPErrorResponseMessages = array(
+		200 => 'Success',
+		400 => 'Bad request',
+		403 => 'There was an error with the certificate',
+		405 => 'The request used a bad :method value. Only POST requests are supported',
+		410 => 'The device token is no longer active for the topic',
+		413 => 'The notification payload was too large',
+		429 => 'The server received too many requests for the same device token',
+		500 => 'Internal server error',
+		503 => 'The server is shutting down and unavailable',
+		self::STATUS_CODE_INTERNAL_ERROR => 'Internal error'
+	); /**< @type array HTTP/2 Error-response messages. */
+
 	protected $_nSendRetryTimes = 3; /**< @type integer Send retry times. */
 
 	protected $_aServiceURLs = array(
 		'tls://gateway.push.apple.com:2195', // Production environment
 		'tls://gateway.sandbox.push.apple.com:2195' // Sandbox environment
 	); /**< @type array Service URLs environments. */
+
+	protected $_aHTTPServiceURLs = array(
+		'https://api.push.apple.com:443', // Production environment
+		'https://api.development.push.apple.com:443' // Sandbox environment
+	); /**< @type array HTTP/2 Service URLs environments. */
 
 	protected $_aMessageQueue = array(); /**< @type array Message queue. */
 	protected $_aErrors = array(); /**< @type array Error container. */
@@ -98,16 +116,19 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		$nMessageQueueLen = count($this->_aMessageQueue);
 		for ($i = 0; $i < $nRecipients; $i++) {
 			$nMessageID = $nMessageQueueLen + $i + 1;
-			$this->_aMessageQueue[$nMessageID] = array(
+			$aMessage = array(
 				'MESSAGE' => $message,
-				'BINARY_NOTIFICATION' => $this->_getBinaryNotification(
+				'ERRORS' => array()
+			);
+			if ($this->_nProtocol === self::PROTOCOL_BINARY) {
+				$aMessage['BINARY_NOTIFICATION'] = $this->_getBinaryNotification(
 					$message->getRecipient($i),
 					$sMessagePayload,
 					$nMessageID,
 					$message->getExpiry()
-				),
-				'ERRORS' => array()
-			);
+				);
+			}
+			$this->_aMessageQueue[$nMessageID] = $aMessage;
 		}
 	}
 
@@ -168,19 +189,31 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 					}
 				}
 
-				$nLen = strlen($aMessage['BINARY_NOTIFICATION']);
+				$nLen = strlen($this->_nProtocol === self::PROTOCOL_HTTP ? $message->getPayload() : $aMessage['BINARY_NOTIFICATION']);
 				$this->_log("STATUS: Sending message ID {$k} {$sCustomIdentifier} (" . ($nErrors + 1) . "/{$this->_nSendRetryTimes}): {$nLen} bytes.");
 
 				$aErrorMessage = null;
-				if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, $aMessage['BINARY_NOTIFICATION']))) {
-					$aErrorMessage = array(
-						'identifier' => $k,
-						'statusCode' => self::STATUS_CODE_INTERNAL_ERROR,
-						'statusMessage' => sprintf('%s (%d bytes written instead of %d bytes)',
-							$this->_aErrorResponseMessages[self::STATUS_CODE_INTERNAL_ERROR], $nWritten, $nLen
-						)
-					);
+
+				if ($this->_nProtocol === self::PROTOCOL_HTTP) {
+					if (!$this->_httpSend($message, $sReply)) {
+						$aErrorMessage = array(
+							'identifier' => $k,
+							'statusCode' => curl_getinfo($this->_hSocket, CURLINFO_HTTP_CODE),
+							'statusMessage' => $sReply
+						);
+					}
+				} else {
+					if ($nLen !== ($nWritten = (int)@fwrite($this->_hSocket, $aMessage['BINARY_NOTIFICATION']))) {
+						$aErrorMessage = array(
+							'identifier' => $k,
+							'statusCode' => self::STATUS_CODE_INTERNAL_ERROR,
+							'statusMessage' => sprintf('%s (%d bytes written instead of %d bytes)',
+								$this->_aErrorResponseMessages[self::STATUS_CODE_INTERNAL_ERROR], $nWritten, $nLen
+							)
+						);
+					}
 				}
+
 				usleep($this->_nWriteInterval);
 
 				$bError = $this->_updateQueue($aErrorMessage);
@@ -190,15 +223,19 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 			}
 
 			if (!$bError) {
-				$read = array($this->_hSocket);
-				$null = NULL;
-				$nChangedStreams = @stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
-				if ($nChangedStreams === false) {
-					$this->_log('ERROR: Unable to wait for a stream availability.');
-					break;
-				} else if ($nChangedStreams > 0) {
-					$bError = $this->_updateQueue();
-					if (!$bError) {
+				if ($this->_nProtocol === self::PROTOCOL_BINARY) {
+					$read = array($this->_hSocket);
+					$null = NULL;
+					$nChangedStreams = @stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
+					if ($nChangedStreams === false) {
+						$this->_log('ERROR: Unable to wait for a stream availability.');
+						break;
+					} else if ($nChangedStreams > 0) {
+						$bError = $this->_updateQueue();
+						if (!$bError) {
+							$this->_aMessageQueue = array();
+						}
+					} else {
 						$this->_aMessageQueue = array();
 					}
 				} else {
@@ -208,6 +245,33 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 
 			$nRun++;
 		}
+	}
+
+	/**
+	 * Send a message using the HTTP/2 API protocol.
+	 *
+	 * @param  $message @type ApnsPHP_Message The message.
+	 * @param  $sReply @type string The reply message.
+	 * @return @type xxx Xxxxx.
+	 */
+	private function _httpSend(ApnsPHP_Message $message, &$sReply)
+	{
+		$aHeaders = array('Content-Type: application/json');
+		$sTopic = $message->getTopic();
+		if (!empty($sTopic)) {
+			$aHeaders[] = sprintf('apns-topic: %s', $sTopic);
+		}
+
+		if (!(curl_setopt_array($this->_hSocket, array(
+			CURLOPT_POST => true,
+			CURLOPT_URL => sprintf('%s/3/device/%s', $this->_aHTTPServiceURLs[$this->_nEnvironment], $message->getRecipient()),
+			CURLOPT_HTTPHEADER => $aHeaders,
+			CURLOPT_POSTFIELDS => $message->getPayload()
+		)) && ($sReply = curl_exec($this->_hSocket)) !== false)) {
+			return false;
+		}
+
+		return curl_getinfo($this->_hSocket, CURLINFO_HTTP_CODE) === 200;
 	}
 
 	/**

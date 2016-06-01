@@ -40,6 +40,8 @@
                                                            bundle:nil];
   self.window.rootViewController = self.viewController;
 
+  NSLog(@"Started.");
+    
   return YES;
 }
 

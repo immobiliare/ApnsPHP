@@ -42,6 +42,9 @@ abstract class ApnsPHP_Abstract
 	const ENVIRONMENT_PRODUCTION = 0; /**< @type integer Production environment. */
 	const ENVIRONMENT_SANDBOX = 1; /**< @type integer Sandbox environment. */
 
+	const PROTOCOL_BINARY = 0; /**< @type integer Binary Provider API. */
+	const PROTOCOL_HTTP   = 1; /**< @type integer APNs Provider API. */
+
 	const DEVICE_BINARY_SIZE = 32; /**< @type integer Device token length. */
 
 	const WRITE_INTERVAL = 10000; /**< @type integer Default write interval in micro seconds. */
@@ -49,8 +52,10 @@ abstract class ApnsPHP_Abstract
 	const SOCKET_SELECT_TIMEOUT = 1000000; /**< @type integer Default socket select timeout in micro seconds. */
 
 	protected $_aServiceURLs = array(); /**< @type array Container for service URLs environments. */
+	protected $_aHTTPServiceURLs = array(); /**< @type array Container for HTTP/2 service URLs environments. */
 
 	protected $_nEnvironment; /**< @type integer Active environment. */
+	protected $_nProtocol; /**< @type integer Active protocol. */
 
 	protected $_nConnectTimeout; /**< @type integer Connect timeout in seconds. */
 	protected $_nConnectRetryTimes = 3; /**< @type integer Connect retry times. */
@@ -73,10 +78,11 @@ abstract class ApnsPHP_Abstract
 	 * @param  $nEnvironment @type integer Environment.
 	 * @param  $sProviderCertificateFile @type string Provider certificate file
 	 *         with key (Bundled PEM).
+	 * @param  $nProtocol @type integer Protocol.
 	 * @throws ApnsPHP_Exception if the environment is not
 	 *         sandbox or production or the provider certificate file is not readable.
 	 */
-	public function __construct($nEnvironment, $sProviderCertificateFile)
+	public function __construct($nEnvironment, $sProviderCertificateFile, $nProtocol = self::PROTOCOL_BINARY)
 	{
 		if ($nEnvironment != self::ENVIRONMENT_PRODUCTION && $nEnvironment != self::ENVIRONMENT_SANDBOX) {
 			throw new ApnsPHP_Exception(
@@ -92,6 +98,13 @@ abstract class ApnsPHP_Abstract
 		}
 		$this->_sProviderCertificateFile = $sProviderCertificateFile;
 
+		if ($nProtocol != self::PROTOCOL_BINARY && $nProtocol != self::PROTOCOL_HTTP) {
+			throw new ApnsPHP_Exception(
+				"Invalid protocol '{$nProtocol}'"
+			);
+		}
+		$this->_nProtocol = $nProtocol;
+		
 		$this->_nConnectTimeout = ini_get("default_socket_timeout");
 		$this->_nWriteInterval = self::WRITE_INTERVAL;
 		$this->_nConnectRetryInterval = self::CONNECT_RETRY_INTERVAL;
@@ -357,7 +370,12 @@ abstract class ApnsPHP_Abstract
 	{
 		if (is_resource($this->_hSocket)) {
 			$this->_log('INFO: Disconnected.');
-			return fclose($this->_hSocket);
+			if ($this->_nProtocol === self::PROTOCOL_HTTP) {
+				curl_close($this->_hSocket);
+				return true;
+			} else {
+				return fclose($this->_hSocket);
+			}
 		}
 		return false;
 	}
@@ -365,14 +383,60 @@ abstract class ApnsPHP_Abstract
 	/**
 	 * Connects to Apple Push Notification service server.
 	 *
-	 * @throws ApnsPHP_Exception if is unable to connect.
 	 * @return @type boolean True if successful connected.
 	 */
 	protected function _connect()
 	{
-		$sURL = $this->_aServiceURLs[$this->_nEnvironment];
-		unset($aURLs);
+		return $this->_nProtocol === self::PROTOCOL_HTTP ? $this->_httpInit() : $this->_binaryConnect($this->_aServiceURLs[$this->_nEnvironment]);
+	}
 
+	/**
+	 * Initializes cURL, the HTTP/2 backend used to connect to Apple Push Notification
+	 * service server via HTTP/2 API protocol.
+	 *
+	 * @throws ApnsPHP_Exception if is unable to initialize.
+	 * @return @type boolean True if successful initialized.
+	 */
+	protected function _httpInit()
+	{
+		$this->_log("INFO: Trying to initialize HTTP/2 backend...");
+
+		$this->_hSocket = curl_init();
+		if (!$this->_hSocket) {
+			throw new ApnsPHP_Exception(
+				"Unable to initialize HTTP/2 backend."
+			);
+		}
+
+		if (!curl_setopt_array($this->_hSocket, array(
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2_0,
+			CURLOPT_SSLCERT => $this->_sProviderCertificateFile,
+			CURLOPT_SSLCERTPASSWD => empty($this->_sProviderCertificatePassphrase) ? null : $this->_sProviderCertificatePassphrase,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_USERAGENT => 'ApnsPHP',
+			CURLOPT_CONNECTTIMEOUT => 10,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => true,
+			CURLOPT_VERBOSE => false
+		))) {
+			throw new ApnsPHP_Exception(
+				"Unable to initialize HTTP/2 backend."
+			);
+		}
+
+		$this->_log("INFO: Initialized HTTP/2 backend.");
+
+		return true;
+	}
+
+	/**
+	 * Connects to Apple Push Notification service server via binary protocol.
+	 *
+	 * @throws ApnsPHP_Exception if is unable to connect.
+	 * @return @type boolean True if successful connected.
+	 */
+	protected function _binaryConnect($sURL)
+	{
 		$this->_log("INFO: Trying {$sURL}...");
 
 		/**
@@ -405,7 +469,7 @@ abstract class ApnsPHP_Abstract
 
 		return true;
 	}
-
+	
 	/**
 	 * Logs a message through the Logger.
 	 *
