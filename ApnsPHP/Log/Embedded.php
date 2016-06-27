@@ -17,6 +17,8 @@
  * @version $Id$
  */
 
+use Psr\Log\AbstractLogger;
+
 /**
  * A simple logger.
  *
@@ -28,17 +30,22 @@
  *
  * @ingroup ApnsPHP_Log
  */
-class ApnsPHP_Log_Embedded implements ApnsPHP_Log_Interface
+class ApnsPHP_Log_Embedded extends AbstractLogger
 {
-	/**
-	 * Logs a message.
-	 *
-	 * @param  $sMessage @type string The message.
-	 */
-	public function log($sMessage)
-	{
-		printf("%s ApnsPHP[%d]: %s\n",
-			date('r'), getmypid(), trim($sMessage)
-		);
-	}
+
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function log($level, $message, array $context = array())
+    {
+        printf("%s: %s ApnsPHP[%d]: %s\n",
+            date('r'), strtoupper($level), getmypid(), trim($message)
+        );
+    }
+
 }
