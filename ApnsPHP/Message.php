@@ -45,6 +45,7 @@ class ApnsPHP_Message
 	protected $_sSound; /**< @type string Sound to play. */
 	protected $_sCategory; /**< @type string notification category. */
 	protected $_bContentAvailable; /**< @type boolean True to initiates the Newsstand background download. @see http://tinyurl.com/ApplePushNotificationNewsstand */
+	protected $_bMutableContent; /**< @type boolean True to activate mutable content key support for ios10 rich notifications. @see https://developer.apple.com/reference/usernotifications/unnotificationserviceextension */
 
 	protected $_aCustomProperties; /**< @type mixed Custom properties container. */
 
@@ -236,6 +237,34 @@ class ApnsPHP_Message
 	}
 
 	/**
+	 * Set the mutable-content key for Notification Service Extensions on iOS10
+	 * @see https://developer.apple.com/reference/usernotifications/unnotificationserviceextension
+	 *
+	 * @param  $bMutableContent @type boolean True to enable flag
+	 * @throws ApnsPHP_Message_Exception if MutableContent is not a
+	 *         boolean.
+	 */
+	public function setMutableContent($bMutableContent = true)
+	{
+		if (!is_bool($bMutableContent)) {
+			throw new ApnsPHP_Message_Exception(
+				"Invalid mutable-content value '{$bMutableContent}'"
+			);
+		}
+		$this->_bMutableContent = $bMutableContent ? true : null;
+	}
+
+	/**
+	 * Get if should set the mutable-content ios10 rich notifications flag
+	 *
+	 * @return @type boolean mutable-content ios10 rich notifications flag
+	 */
+	public function getMutableContent()
+	{
+		return $this->_bMutableContent;
+	}
+
+	/**
 	 * Set a custom property.
 	 *
 	 * @param  $sName @type string Custom property name.
@@ -373,6 +402,9 @@ class ApnsPHP_Message
 		}
 		if (isset($this->_bContentAvailable)) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['content-available'] = (int)$this->_bContentAvailable;
+		}
+		if (isset($this->_bMutableContent)) {
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['mutable-content'] = (int)$this->_bMutableContent;
 		}
 		if (isset($this->_sCategory)) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['category'] = (string)$this->_sCategory;
