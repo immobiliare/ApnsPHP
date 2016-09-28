@@ -125,9 +125,9 @@ class ApnsPHP_Message
 	 *
 	 * @param  $sText @type string An alert message to display to the user.
 	 */
-	public function setText($sText)
+	public function setText($title, $body = null)
 	{
-		$this->_sText = $sText;
+		$this->_sText = !$body ? $title : compact("title", "body");
 	}
 
 	/**
@@ -392,7 +392,7 @@ class ApnsPHP_Message
 		$aPayload[self::APPLE_RESERVED_NAMESPACE] = array();
 
 		if (isset($this->_sText)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
+			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = $this->_sText;
 		}
 		if (isset($this->_nBadge) && $this->_nBadge >= 0) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->_nBadge;
