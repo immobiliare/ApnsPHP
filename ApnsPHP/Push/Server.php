@@ -126,13 +126,13 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 			case SIGQUIT:
 			case SIGINT:
 				if (($nPid = posix_getpid()) != $this->_nParentPid) {
-					$this->_log("INFO: Child $nPid received signal #{$nSignal}, shutdown...");
+					$this->_logger()->info("Child $nPid received signal #{$nSignal}, shutdown...");
 					$this->_nRunningProcesses--;
 					exit(0);
 				}
 				break;
 			default:
-				$this->_log("INFO: Ignored signal #{$nSignal}.");
+				$this->_logger()->info("Ignored signal #{$nSignal}.");
 				break;
 		}
 	}
@@ -146,7 +146,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	public function onShutdown()
 	{
 		if (posix_getpid() == $this->_nParentPid) {
-			$this->_log('INFO: Parent shutdown, cleaning memory...');
+			$this->_logger()->info('Parent shutdown, cleaning memory...');
 			@shm_remove($this->_hShm) && @shm_detach($this->_hShm);
 			@sem_remove($this->_hSem);
 		}
@@ -178,17 +178,17 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 			$this->_nCurrentProcess = $i;
 			$this->_aPids[$i] = $nPid = pcntl_fork();
 			if ($nPid == -1) {
-				$this->_log('WARNING: Could not fork');
+				$this->_logger()->warning('Could not fork');
 			} else if ($nPid > 0) {
 				// Parent process
-				$this->_log("INFO: Forked process PID {$nPid}");
+				$this->_logger()->info("Forked process PID {$nPid}");
 				$this->_nRunningProcesses++;
 			} else {
 				// Child process
 				try {
 					parent::connect();
 				} catch (ApnsPHP_Exception $e) {
-					$this->_log('ERROR: ' . $e->getMessage() . ', exiting...');
+					$this->_logger()->error($e->getMessage() . ', exiting...');
 					exit(1);
 				}
 				$this->_mainLoop();
@@ -276,7 +276,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 			pcntl_signal_dispatch();
 
 			if (posix_getppid() != $this->_nParentPid) {
-				$this->_log("INFO: Parent process {$this->_nParentPid} died unexpectedly, exiting...");
+				$this->_logger()->info("Parent process {$this->_nParentPid} died unexpectedly, exiting...");
 				break;
 			}
 
@@ -294,7 +294,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 
 			$nMessages = count($aQueue);
 			if ($nMessages > 0) {
-				$this->_log('INFO: Process ' . ($this->_nCurrentProcess + 1) . " has {$nMessages} messages, sending...");
+				$this->_logger()->info('Process ' . ($this->_nCurrentProcess + 1) . " has {$nMessages} messages, sending...");
 				parent::send();
 			} else {
 				usleep(self::MAIN_LOOP_USLEEP);

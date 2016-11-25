@@ -27,6 +27,8 @@
  * @defgroup ApplePushNotificationService ApnsPHP
  */
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Abstract class: this is the superclass for all Apple Push Notification Service
  * classes.
@@ -63,7 +65,7 @@ abstract class ApnsPHP_Abstract
 	protected $_nConnectRetryInterval; /**< @type integer Connect retry interval in micro seconds. */
 	protected $_nSocketSelectTimeout; /**< @type integer Socket select timeout in micro seconds. */
 
-	protected $_logger; /**< @type ApnsPHP_Log_Interface Logger. */
+	protected $_logger; /**< @type Psr\Log\LoggerInterface Logger. */
 
 	protected $_hSocket; /**< @type resource SSL Socket. */
 
@@ -102,30 +104,30 @@ abstract class ApnsPHP_Abstract
 	 * Set the Logger instance to use for logging purpose.
 	 *
 	 * The default logger is ApnsPHP_Log_Embedded, an instance
-	 * of ApnsPHP_Log_Interface that simply print to standard
+	 * of LoggerInterface that simply print to standard
 	 * output log messages.
 	 *
-	 * To set a custom logger you have to implement ApnsPHP_Log_Interface
+	 * To set a custom logger you have to implement LoggerInterface
 	 * and use setLogger, otherwise standard logger will be used.
 	 *
-	 * @see ApnsPHP_Log_Interface
+	 * @see Psr\Log\LoggerInterface
 	 * @see ApnsPHP_Log_Embedded
 	 *
-	 * @param  $logger @type ApnsPHP_Log_Interface Logger instance.
+	 * @param  $logger @type LoggerInterface Logger instance.
 	 * @throws ApnsPHP_Exception if Logger is not an instance
-	 *         of ApnsPHP_Log_Interface.
+	 *         of LoggerInterface.
 	 */
-	public function setLogger(ApnsPHP_Log_Interface $logger)
+	public function setLogger(LoggerInterface $logger)
 	{
 		if (!is_object($logger)) {
 			throw new ApnsPHP_Exception(
-				"The logger should be an instance of 'ApnsPHP_Log_Interface'"
+				"The logger should be an instance of 'Psr\Log\LoggerInterface'"
 			);
 		}
-		if (!($logger instanceof ApnsPHP_Log_Interface)) {
+		if (!($logger instanceof LoggerInterface)) {
 			throw new ApnsPHP_Exception(
 				"Unable to use an instance of '" . get_class($logger) . "' as logger: " .
-				"a logger must implements ApnsPHP_Log_Interface."
+				"a logger must implements 'Psr\Log\LoggerInterface'."
 			);
 		}
 		$this->_logger = $logger;
@@ -134,7 +136,7 @@ abstract class ApnsPHP_Abstract
 	/**
 	 * Get the Logger instance.
 	 *
-	 * @return @type ApnsPHP_Log_Interface Current Logger instance.
+	 * @return @type Psr\Log\LoggerInterface Current Logger instance.
 	 */
 	public function getLogger()
 	{
@@ -190,7 +192,7 @@ abstract class ApnsPHP_Abstract
 	/**
 	 * Set the write interval.
 	 *
-	 * After each socket write operation we are sleeping for this 
+	 * After each socket write operation we are sleeping for this
 	 * time interval. To speed up the sending operations, use Zero
 	 * as parameter but some messages may be lost.
 	 *
@@ -333,12 +335,12 @@ abstract class ApnsPHP_Abstract
 			try {
 				$bConnected = $this->_connect();
 			} catch (ApnsPHP_Exception $e) {
-				$this->_log('ERROR: ' . $e->getMessage());
+				$this->_logger()->error($e->getMessage());
 				if ($nRetry >= $this->_nConnectRetryTimes) {
 					throw $e;
 				} else {
-					$this->_log(
-						"INFO: Retry to connect (" . ($nRetry+1) .
+					$this->_logger()->info(
+						"Retry to connect (" . ($nRetry+1) .
 						"/{$this->_nConnectRetryTimes})..."
 					);
 					usleep($this->_nConnectRetryInterval);
@@ -356,7 +358,7 @@ abstract class ApnsPHP_Abstract
 	public function disconnect()
 	{
 		if (is_resource($this->_hSocket)) {
-			$this->_log('INFO: Disconnected.');
+			$this->_logger()->info('Disconnected.');
 			return fclose($this->_hSocket);
 		}
 		return false;
@@ -373,7 +375,7 @@ abstract class ApnsPHP_Abstract
 		$sURL = $this->_aServiceURLs[$this->_nEnvironment];
 		unset($aURLs);
 
-		$this->_log("INFO: Trying {$sURL}...");
+		$this->_logger()->info("Trying {$sURL}...");
 
 		/**
 		 * @see http://php.net/manual/en/context.ssl.php
@@ -401,21 +403,20 @@ abstract class ApnsPHP_Abstract
 		stream_set_blocking($this->_hSocket, 0);
 		stream_set_write_buffer($this->_hSocket, 0);
 
-		$this->_log("INFO: Connected to {$sURL}.");
+		$this->_logger()->info("Connected to {$sURL}.");
 
 		return true;
 	}
 
 	/**
-	 * Logs a message through the Logger.
-	 *
-	 * @param  $sMessage @type string The message.
+	 * Return the Logger (with lazy loading)
 	 */
-	protected function _log($sMessage)
+	protected function _logger()
 	{
 		if (!isset($this->_logger)) {
 			$this->_logger = new ApnsPHP_Log_Embedded();
 		}
-		$this->_logger->log($sMessage);
+
+		return $this->_logger;
 	}
 }

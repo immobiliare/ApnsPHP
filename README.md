@@ -47,7 +47,7 @@ Architecture
 - **Push class**, to push one or more messages to Apple Push Notification service.
 - **Feedback class**, to query the Apple Feedback service to get the list of broken device tokens.
 - **Push Server class**, to create a Push Server with one or more (forked) processes reading from a common message queue.
-- **Log class/interface**, to log to standard output or for custom logging purpose.
+- **Log class/interface**, to log to standard output or for custom logging purpose (supports loggers implementing the PSR-3 logger interface).
 - **Objective-C Demo Project** with not-running, running in foreground and running in background application state support.
 
 Classes hierarchy
