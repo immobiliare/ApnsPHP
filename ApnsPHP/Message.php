@@ -441,13 +441,13 @@ class ApnsPHP_Message
 			'"' . self::APPLE_RESERVED_NAMESPACE . '":{}',
 			$sJSON
 		);
-		$nJSONPayloadLen = strlen($sJSONPayload);
+		$nJSONPayloadLen =mb_strlen($sJSONPayload, 'UTF-8');
 
 		if ($nJSONPayloadLen > self::PAYLOAD_MAXIMUM_SIZE) {
 			if ($this->_bAutoAdjustLongPayload) {
-				$nMaxTextLen = $nTextLen = strlen($this->_sText) - ($nJSONPayloadLen - self::PAYLOAD_MAXIMUM_SIZE);
+				$nMaxTextLen = $nTextLen = mb_strlen($this->_sText, 'UTF-8') - ($nJSONPayloadLen - self::PAYLOAD_MAXIMUM_SIZE);
 				if ($nMaxTextLen > 0) {
-					while (strlen($this->_sText = mb_substr($this->_sText, 0, --$nTextLen, 'UTF-8')) > $nMaxTextLen);
+					while (mb_strlen($this->_sText = mb_substr($this->_sText, 0, --$nTextLen, 'UTF-8'), 'UTF-8') > $nMaxTextLen);
 					return $this->getPayload();
 				} else {
 					throw new ApnsPHP_Message_Exception(
