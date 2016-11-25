@@ -209,6 +209,24 @@ class ApnsPHP_Message
 	}
 
 	/**
+	 * Get notification priority
+	 * @return int
+	 */
+	public function getPriority()
+	{
+		return $this->_nPriority;
+	}
+
+	/**
+	 * Set notification priority
+	 * @param int $nPriority
+	 */
+	public function setPriority($nPriority = 10)
+	{
+		$this->_nPriority = $nPriority;
+	}
+
+	/**
 	 * Initiates the Newsstand background download.
 	 * @see http://tinyurl.com/ApplePushNotificationNewsstand
 	 *

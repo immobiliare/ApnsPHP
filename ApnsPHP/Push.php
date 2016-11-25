@@ -32,7 +32,7 @@
  */
 class ApnsPHP_Push extends ApnsPHP_Abstract
 {
-	const COMMAND_PUSH = 1; /**< @type integer Payload command. */
+	const COMMAND_PUSH = 2; /**< @type integer Payload command. */
 
 	const ERROR_RESPONSE_SIZE = 6; /**< @type integer Error-response packet size. */
 	const ERROR_RESPONSE_COMMAND = 8; /**< @type integer Error-response command code. */
@@ -49,6 +49,8 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		6   => 'Invalid topic size',
 		7   => 'Invalid payload size',
 		8   => 'Invalid token',
+		10  => 'Shutdown',
+		255 => 'None (unknown)',
 		self::STATUS_CODE_INTERNAL_ERROR => 'Internal error'
 	); /**< @type array Error-response messages. */
 
@@ -104,7 +106,8 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 					$message->getRecipient($i),
 					$sMessagePayload,
 					$nMessageID,
-					$message->getExpiry()
+					$message->getExpiry(),
+					$message->getPriority()
 				),
 				'ERRORS' => array()
 			);
@@ -260,14 +263,15 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 *         the notification at all. Default is 86400 * 7, 7 days.
 	 * @return @type string A binary notification.
 	 */
-	protected function _getBinaryNotification($sDeviceToken, $sPayload, $nMessageID = 0, $nExpire = 604800)
+	protected function _getBinaryNotification($sDeviceToken, $sPayload, $nMessageID = 0, $nExpire = 604800, $priority = 10)
 	{
-		$nTokenLength = strlen($sDeviceToken);
-		$nPayloadLength = strlen($sPayload);
+		$pn = pack('CnH*', 1, 32, $sDeviceToken)
+			. pack('CnA*', 2, strlen($sPayload), $sPayload)
+      		. pack('CnN', 3, 4, $nMessageID)
+      		. pack('CnN', 4, 4, $nExpire > 0 ? time() + $nExpire : 0)
+      		. pack('CnC', 5, 1, $priority);
 
-		$sRet  = pack('CNNnH*', self::COMMAND_PUSH, $nMessageID, $nExpire > 0 ? time() + $nExpire : 0, self::DEVICE_BINARY_SIZE, $sDeviceToken);
-		$sRet .= pack('n', $nPayloadLength);
-		$sRet .= $sPayload;
+		$sRet = pack('CN', self::COMMAND_PUSH, strlen($pn)) . $pn;
 
 		return $sRet;
 	}
