@@ -1,9 +1,9 @@
 <?php
 /**
  * @file
- * sample_push_custom.php
+ * sample_push.php
  *
- * Custom Push demo
+ * Push demo
  *
  * LICENSE
  *
@@ -26,13 +26,16 @@ date_default_timezone_set('Europe/Rome');
 error_reporting(-1);
 
 // Using Autoload all classes are loaded on-demand
-require_once 'ApnsPHP/Autoload.php';
+require_once '../ApnsPHP/Autoload.php';
 
-// Instanciate a new ApnsPHP_Push object
+// Instantiate a new ApnsPHP_Push object
 $push = new ApnsPHP_Push(
 	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
 	'server_certificates_bundle_sandbox.pem'
 );
+
+// Set the Provider Certificate passphrase
+// $push->setProviderCertificatePassphrase('test');
 
 // Set the Root Certificate Autority to verify the Apple remote peer
 $push->setRootCertificationAuthority('entrust_root_certification_authority.pem');
@@ -41,7 +44,7 @@ $push->setRootCertificationAuthority('entrust_root_certification_authority.pem')
 $push->connect();
 
 // Instantiate a new Message with a single recipient
-$message = new ApnsPHP_Message_Custom('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
+$message = new ApnsPHP_Message('1e82db91c7ceddd72bf33d74ae052ac9c84a065b35148ac401388843106a7485');
 
 // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
 // over a ApnsPHP_Message object retrieved with the getErrors() message.
@@ -59,18 +62,11 @@ $message->setSound();
 // Set a custom property
 $message->setCustomProperty('acme2', array('bang', 'whiz'));
 
+// Set another custom property
+$message->setCustomProperty('acme3', array('bing', 'bong'));
+
 // Set the expiry value to 30 seconds
 $message->setExpiry(30);
-
-// Set the "View" button title.
-$message->setActionLocKey('Show me!');
-
-// Set the alert-message string and variable string values to appear in place of the format specifiers.
-$message->setLocKey('Hello %1$@, you have %2$@ new messages!'); // This will overwrite the text specified with setText() method.
-$message->setLocArgs(array('Steve', 5));
-
-// Set the filename of an image file in the application bundle.
-$message->setLaunchImage('DefaultAlert.png');
 
 // Add the message to the message queue
 $push->add($message);
