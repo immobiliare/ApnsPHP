@@ -272,8 +272,23 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	 */
 	protected function _mainLoop()
 	{
+		$last_message = time();
+
 		while (true) {
 			pcntl_signal_dispatch();
+
+			if ( $last_message<(time()-1800) ) {
+				try {
+					$this->_log('WARNING: reconnecting (Last message: '. strftime('%F %T', $last_message) .')...');
+
+					parent::disconnect();
+					usleep(self::MAIN_LOOP_USLEEP);
+					parent::connect();
+				} catch (ApnsPHP_Exception $e) {
+					$this->_log('ERROR: ' . $e->getMessage() . ', exiting...');
+					exit(1);
+				}
+			}
 
 			if (posix_getppid() != $this->_nParentPid) {
 				$this->_log("INFO: Parent process {$this->_nParentPid} died unexpectedly, exiting...");
@@ -287,6 +302,8 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 
 			$aQueue = $this->_getQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
 			foreach($aQueue as $message) {
+				$last_message = time();
+
 				parent::add($message);
 			}
 			$this->_setQueue(self::SHM_MESSAGES_QUEUE_KEY_START, $this->_nCurrentProcess);
