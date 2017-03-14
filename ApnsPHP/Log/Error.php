@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * ApnsPHP_Log_Silent class definition.
+ * ApnsPHP_Log_Error class definition.
  *
  * LICENSE
  *
