@@ -27,18 +27,16 @@
  * @see http://php.net/spl_autoload_register
  *
  * @param  $sClassName @type string The class name.
- * @throws Exception if class name is empty, the current path is empty or class
- *         file does not exists or file was loaded but class name was not found.
  */
 function ApnsPHP_Autoload($sClassName)
 {
 	if (empty($sClassName)) {
-		throw new Exception('Class name is empty');
+		return;
 	}
 
 	$sPath = dirname(dirname(__FILE__));
 	if (empty($sPath)) {
-		throw new Exception('Current path is empty');
+		return;
 	}
 
 	$sFile = sprintf('%s%s%s.php',
