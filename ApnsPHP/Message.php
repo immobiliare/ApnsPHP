@@ -145,7 +145,7 @@ class ApnsPHP_Message
 	 * Set the alert title to display to the user.  This will be BOLD text on the top of the push message. If
 	 * this title is not set - only the _sText will be used in the alert without bold text. 
 	 *
-	 * @param  $sText @type string An alert title to display to the user.
+	 * @param  $sTitle @type string An alert title to display to the user.
 	 */
 	public function setTitle($sTitle)
 	{
@@ -157,7 +157,7 @@ class ApnsPHP_Message
 	 *
 	 * @return @type string The alert title to display to the user.
 	 */
-	public function getText()
+	public function getTitle()
 	{
 	    return $this->_sTitle;
 	}
@@ -413,9 +413,6 @@ class ApnsPHP_Message
 	{
 		$aPayload[self::APPLE_RESERVED_NAMESPACE] = array();
 
-		if (isset($this->_sText)) {
-			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
-		}
 		if (isset($this->_sText)) {
 		    if (isset($this->_sTitle) && strlen($this->_sTitle) > 0) {
 		        // if the title is set, use it 
