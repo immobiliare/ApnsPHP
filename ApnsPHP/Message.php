@@ -41,6 +41,7 @@ class ApnsPHP_Message
 	protected $_aDeviceTokens = array(); /**< @type array Recipients device tokens. */
 
 	protected $_sText; /**< @type string Alert message to display to the user. */
+	protected $_sTitle; /**< @type string Alert title to display to the user. */
 	protected $_nBadge; /**< @type integer Number to badge the application icon with. */
 	protected $_sSound; /**< @type string Sound to play. */
 	protected $_sCategory; /**< @type string notification category. */
@@ -140,6 +141,27 @@ class ApnsPHP_Message
 		return $this->_sText;
 	}
 
+	/**
+	 * Set the alert title to display to the user.  This will be BOLD text on the top of the push message. If
+	 * this title is not set - only the _sText will be used in the alert without bold text. 
+	 *
+	 * @param  $sText @type string An alert title to display to the user.
+	 */
+	public function setTitle($sTitle)
+	{
+	    $this->_sTitle = $sTitle;
+	}
+	
+	/**
+	 * Get the alert title to display to the user.
+	 *
+	 * @return @type string The alert title to display to the user.
+	 */
+	public function getText()
+	{
+	    return $this->_sTitle;
+	}
+	
 	/**
 	 * Set the number to badge the application icon with.
 	 *
@@ -384,7 +406,7 @@ class ApnsPHP_Message
 
 	/**
 	 * Get the payload dictionary.
-	 *
+	 * For more information on push titles see : https://stackoverflow.com/questions/40647061/bold-or-other-formatting-in-ios-push-notification
 	 * @return @type array The payload dictionary.
 	 */
 	protected function _getPayload()
@@ -394,6 +416,18 @@ class ApnsPHP_Message
 		if (isset($this->_sText)) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
 		}
+		if (isset($this->_sText)) {
+		    if (isset($this->_sTitle) && strlen($this->_sTitle) > 0) {
+		        // if the title is set, use it 
+		        $aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = array();
+		        $aPayload[self::APPLE_RESERVED_NAMESPACE]['alert']['title'] =  (string)$this->_sTitle;
+		        $aPayload[self::APPLE_RESERVED_NAMESPACE]['alert']['body'] = (string)$this->_sText;
+		    } else {
+		        // if the title is not set, use the standard alert message format
+		        $aPayload[self::APPLE_RESERVED_NAMESPACE]['alert'] = (string)$this->_sText;
+		    }
+		}
+		
 		if (isset($this->_nBadge) && $this->_nBadge >= 0) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->_nBadge;
 		}
