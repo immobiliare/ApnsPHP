@@ -33,7 +33,8 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	protected $_aLocArgs; /**< @type array Variable string values to appear in place of the format specifiers in loc-key. */
 	protected $_sLaunchImage; /**< @type string The filename of an image file in the application bundle. */
 	protected $_sTitle; /**< @type string The title of an short looknotification displayed on Apple Watch. */
-
+	protected $_sTitleLocKey; /**< @type string The key to a title string in the Localizable.strings file displayed on Apple Watch */
+	protected $_aTitleLocArgs; /**< @type array Variable string values to appear in place of the format specifiers in title-loc-key. */
 	/**
 	 * Set the "View" button title.
 	 *
@@ -100,7 +101,7 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	 * Get the variable string values to appear in place of the format specifiers
 	 * in loc-key.
 	 *
-	 * @return @type string The variable string values.
+	 * @return @type array The variable string values.
 	 */
 	public function getLocArgs()
 	{
@@ -158,6 +159,49 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	}
 
 	/**
+	 * Set the key to a title string in the Localizable.strings file for the current localization.
+	 *
+	 * The key string can be formatted with %@ and %n$@ specifiers to take the variables specified in the title-loc-args array.
+	 *
+	 * @param  $sTitleLocKey @type string The alert-message string.
+	 */
+	public function setTitleLocKey($sTitleLocKey)
+	{
+		$this->_sTitleLocKey = $sTitleLocKey;
+	}
+
+	/**
+	 * Get the title string in Localizable.strings file.
+	 *
+	 * @return @type string The title string.
+	 */
+	public function getTitleLocKey()
+	{
+		return $this->_sTitleLocKey;
+	}
+
+	/**
+	 * Set the variable string values to appear in place of the format specifiers
+	 * in title-loc-key.
+	 *
+	 * @param  $aTitleLocArgs @type array The variable string values.
+	 */
+	public function setTitleLocArgs($aTitleLocArgs)
+	{
+		$this->_aTitleLocArgs = $aTitleLocArgs;
+	}
+
+	/**
+	 * Get the variable string values to appear in place of the format specifiers
+	 * in title-loc-key.
+	 *
+	 * @return @type array The variable string values.
+	 */
+	public function getTitleLocArgs()
+	{
+		return $this->_aTitleLocArgs;
+	}
+	/**
 	 * Get the payload dictionary.
 	 *
 	 * @return @type array The payload dictionary.
@@ -191,6 +235,12 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 
 		if (isset($this->_sTitle)) {
 			$aPayload['aps']['alert']['title'] = (string)$this->_sTitle;
+		}
+		if (isset($this->_sTitleLocKey)) {
+			$aPayload['aps']['alert']['title-loc'] = (string)$this->_sTitleLocKey;
+		}
+		if (isset($this->_aTitleLocArgs)) {
+			$aPayload['aps']['alert']['title-loc-args'] = $this->_aTitleLocArgs;
 		}
 
 		return $aPayload;
