@@ -10,7 +10,7 @@ To generate a certificate on a **Mac OS X**:
 
 1. Log-in to the [iPhone Developer Program Portal](http://developer.apple.com/iphone/manage/overview/index.action)
 1. Choose **App IDs** from the menu on the right ([or click here](http://developer.apple.com/iphone/manage/bundles/index.action))
-1. Create an App ID without a wildcard. For example `3L223ZX9Y3.com.immobiliare.test`
+1. Create an App ID without a wildcard. For example `3L223ZX9Y3.it.immobiliare.labs.apnsphp`
 1. Click the **Configure** link next to this App ID and then click on the button to start the wizard to generate a new **Development Push SSL Certificate** ([Apple Documentation: Creating the SSL Certificate and Keys](http://developer.apple.com/iphone/library/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ProvisioningDevelopment/ProvisioningDevelopment.html#//apple_ref/doc/uid/TP40008194-CH104-SW4))
 1. Download this certificate and double click on `aps_developer_identity.cer` to import it into your Keychain
 1. Launch **Keychain Assistant** (located in Application, Utilities or search for it with Spotlight) and click on My Certificates on the left
@@ -27,15 +27,11 @@ Verify peer using Entrust Root Certification Authority
 
 Download the Entrust Root Authority certificate **directly from Entrust Inc. website**:
 
-1. Navigate to https://www.entrust.net/downloads/root_index.cfm
-1. Choose "Personal Use"
-Download the Entrust CA (2048) file (entrust_2048_ca.cer) https://www.entrust.net/downloads/binary/entrust_2048_ca.cer for the **Sandbox environment**; download the Entrust Secure Server CA file (entrust_ssl_ca.cer) https://www.entrust.net/downloads/binary/entrust_ssl_ca.cer for the **Production environment** *until December 22nd* (**after December 22nd, 2010 you have to use entrust_2048_ca.cer also for the Production Environment as Apple** said: "*To ensure you can continue to validate your server's connection to the Apple Push Notification service, you will need to update your push notification server with a copy of the 2048-bit root certificate from Entrust's website.*").
+1. Navigate to https://www.entrust.com/get-support/ssl-certificate-support/root-certificate-downloads/
+2. Download the Entrust CA (2048) file (entrust_2048_ca.cer) https://www.entrust.com/root-certificates/entrust_2048_ca.cer
 
-If you want to use the same file for the Sandbox and the Production environment please concat the two certificates. For example:
 ```
-wget https://www.entrust.net/downloads/binary/entrust_2048_ca.cer -O - > entrust_root_certification_authority.pem
-echo >> entrust_root_certification_authority.pem
-wget https://www.entrust.net/downloads/binary/entrust_ssl_ca.cer -O - >> entrust_root_certification_authority.pem
+wget https://www.entrust.com/root-certificates/entrust_2048_ca.cer -O - > entrust_root_certification_authority.pem
 ```
 
 Otherwise (*for use **only** in a Mac OS X environment*), export the Entrust Root Authority certificate:

@@ -33,6 +33,7 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 	protected $_aLocArgs; /**< @type array Variable string values to appear in place of the format specifiers in loc-key. */
 	protected $_sLaunchImage; /**< @type string The filename of an image file in the application bundle. */
 	protected $_sTitle; /**< @type string The title of an short looknotification displayed on Apple Watch. */
+    protected $_sSubTitle; /**< @type string The subtitle of a secondary description */
 
 	/**
 	 * Set the "View" button title.
@@ -157,6 +158,26 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 		return $this->_sTitle;
 	}
 
+        /**
+	 * Set the subtitle of a secondary description on iOS 10.0+ and watchOS 3.0+
+	 * See https://developer.apple.com/reference/usernotifications/unmutablenotificationcontent/1649873-subtitle
+	 *
+	 * @param  $sSubTitle @type string the subtitle of a secondary description
+	 */
+	public function setSubTitle($sSubTitle)
+	{
+		$this->_sSubTitle = $sSubTitle;
+	}
+
+	/**
+	 * Get the subtitle of a secondary description on iOS 10.0+ and watchOS 3.0+
+	 *
+	 * @return @type string the subtitle of a secondary description on 
+	 */
+	public function getSubTitle()
+	{
+		return $this->_sSubTitle;
+	}
 	/**
 	 * Get the payload dictionary.
 	 *
@@ -192,7 +213,10 @@ class ApnsPHP_Message_Custom extends ApnsPHP_Message
 		if (isset($this->_sTitle)) {
 			$aPayload['aps']['alert']['title'] = (string)$this->_sTitle;
 		}
-
+		
+		if (isset($this->_sSubTitle)) {
+			$aPayload['aps']['alert']['subtitle'] = (string)$this->_sSubTitle;
+		}
 		return $aPayload;
 	}
 }

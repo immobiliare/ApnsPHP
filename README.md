@@ -19,6 +19,7 @@ A **full set** of *open source* PHP classes to interact with the **Apple Push No
 
 News
 ----
+- **June 1, 2016**, First implementation of the HTTP/2 Protocol, please download [this package](https://github.com/immobiliare/ApnsPHP/releases/tag/v2.0.0-alpha) (please check if you have CURL with HTTP2 support built in your PHP version and generate a new certificate, you cannot use the same as binary version: [Creating a Universal Push Notification Client SSL Certificate](https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/AddingCapabilities/AddingCapabilities.html#//apple_ref/doc/uid/TP40012582-CH26-SW11)).
 - **September 29, 2015**, Some stats on this README.md, thanks [Badge Poser](https://poser.pugx.org).
 - **May 12, 2015**, ApnsPHP has been moved to the [Immobiliare Labs](https://github.com/immobiliare) organization on github.
 - **May 07, 2015**, ApnsPHP has increased the default payload size to 2048 and is now using the TLS protocol by default instead of the old SSL. News from Apple: https://developer.apple.com/news/?id=10222014a
