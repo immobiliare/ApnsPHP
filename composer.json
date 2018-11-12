@@ -11,7 +11,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"ApnsPHP_": "ApnsPHP/"
+			"ApnsPHP_": ""
 		}
 	}
 }
