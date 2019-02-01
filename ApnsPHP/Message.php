@@ -47,6 +47,7 @@ class ApnsPHP_Message
 	protected $_sCategory; /**< @type string notification category. */
 	protected $_bContentAvailable; /**< @type boolean True to initiates the Newsstand background download. @see http://tinyurl.com/ApplePushNotificationNewsstand */
 	protected $_bMutableContent; /**< @type boolean True to activate mutable content key support for ios10 rich notifications. @see https://developer.apple.com/reference/usernotifications/unnotificationserviceextension */
+	protected $_sThreadID; /**< @type string notification thread-id. */
 
 	protected $_aCustomProperties; /**< @type mixed Custom properties container. */
 
@@ -228,6 +229,26 @@ class ApnsPHP_Message
 	public function getCategory()
 	{
 		return $this->_sCategory;
+	}
+
+	/**
+	* Set the thread-id of notification
+	*
+	* @param  $sThreadID @type string @optional A thread-id for iOS 12 notification group.
+	*/
+	public function setThreadID($sThreadID = '')
+	{
+		$this->_sThreadID = $sThreadID;
+	}
+
+	/**
+	* Get the thread-id of notification
+	*
+	* @return @type string The notification thread-id
+	*/
+	public function getThreadID()
+	{
+		return $this->_sThreadID;
 	}
 
 	/**
@@ -440,6 +461,9 @@ class ApnsPHP_Message
 		if (isset($this->_sCategory)) {
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['category'] = (string)$this->_sCategory;
 		}
+		if (isset($this->_sThreadID)) {
+		    $aPayload[self::APPLE_RESERVED_NAMESPACE]['thread-id'] = (string)$this->_sThreadID;
+        }
 
 		if (is_array($this->_aCustomProperties)) {
 			foreach($this->_aCustomProperties as $sPropertyName => $mPropertyValue) {
