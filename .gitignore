@@ -18,3 +18,6 @@ entrust_root_certification_authority.pem
 server_certificates_bundle_sandbox.pem
 *~
 Doc/Reference/html
+# Composer
+composer.lock
+vendor
