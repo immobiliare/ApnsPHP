@@ -292,6 +292,10 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	 */
 	protected function _readErrorMessage()
 	{
+        $bytesInSocket = socket_get_status($this->_hSocket)['unread_bytes'];
+   if($bytesInSocket === 0){
+      return null;
+    }
 		$sErrorResponse = @fread($this->_hSocket, self::ERROR_RESPONSE_SIZE);
 		if ($sErrorResponse === false || strlen($sErrorResponse) != self::ERROR_RESPONSE_SIZE) {
 			return;
