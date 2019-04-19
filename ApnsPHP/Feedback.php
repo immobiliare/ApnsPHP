@@ -94,7 +94,7 @@ class ApnsPHP_Feedback extends ApnsPHP_Abstract
 			}
 
 			$read = array($this->_hSocket);
-			$null = NULL;
+			$null = null;
 			$nChangedStreams = stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
 			if ($nChangedStreams === false) {
 				$this->_log('WARNING: Unable to wait for a stream availability.');

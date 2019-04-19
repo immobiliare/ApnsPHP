@@ -191,7 +191,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 
 			if (!$bError) {
 				$read = array($this->_hSocket);
-				$null = NULL;
+				$null = null;
 				$nChangedStreams = @stream_select($read, $null, $null, 0, $this->_nSocketSelectTimeout);
 				if ($nChangedStreams === false) {
 					$this->_log('ERROR: Unable to wait for a stream availability.');
