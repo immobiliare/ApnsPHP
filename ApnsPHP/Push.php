@@ -168,7 +168,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 					}
 				}
 
-				$nLen = strlen($aMessage['BINARY_NOTIFICATION']);
+				$nLen = mb_strlen($aMessage['BINARY_NOTIFICATION'], "8bit");
 				$this->_log("STATUS: Sending message ID {$k} {$sCustomIdentifier} (" . ($nErrors + 1) . "/{$this->_nSendRetryTimes}): {$nLen} bytes.");
 
 				$aErrorMessage = null;
@@ -263,7 +263,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 	protected function _getBinaryNotification($sDeviceToken, $sPayload, $nMessageID = 0, $nExpire = 604800)
 	{
 		$nTokenLength = strlen($sDeviceToken);
-		$nPayloadLength = strlen($sPayload);
+		$nPayloadLength = mb_strlen($sPayload, "8bit");
 
 		$sRet  = pack('CNNnH*', self::COMMAND_PUSH, $nMessageID, $nExpire > 0 ? time() + $nExpire : 0, self::DEVICE_BINARY_SIZE, $sDeviceToken);
 		$sRet .= pack('n', $nPayloadLength);
