@@ -60,6 +60,7 @@ class ApnsPHP_Push_Server extends ApnsPHP_Push
 	{
 		parent::__construct($nEnvironment, $sProviderCertificateFile);
 
+		$this->_bServerMode = true;
 		$this->_nParentPid = posix_getpid();
 		$this->_hShm = shm_attach(mt_rand(), self::SHM_SIZE);
 		if ($this->_hShm === false) {
