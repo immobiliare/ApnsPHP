@@ -49,6 +49,7 @@ class ApnsPHP_Push extends ApnsPHP_Abstract
 		6   => 'Invalid topic size',
 		7   => 'Invalid payload size',
 		8   => 'Invalid token',
+		10  => 'Shutdown',
 		self::STATUS_CODE_INTERNAL_ERROR => 'Internal error'
 	); /**< @type array Error-response messages. */
 
