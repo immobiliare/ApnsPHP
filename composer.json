@@ -10,6 +10,9 @@
 		"lib-openssl": "*"
 	},
 	"autoload": {
-        "files": ["ApnsPHP/Autoload.php"]
-    }
+		"files": ["ApnsPHP/Autoload.php"]
+	},
+	"archive": {
+		"exclude": ["/Objective-C Demo"]
+	}
 }
