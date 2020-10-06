@@ -50,6 +50,11 @@ abstract class ApnsPHP_Abstract
 	const WRITE_INTERVAL = 10000; /**< @type integer Default write interval in micro seconds. */
 	const CONNECT_RETRY_INTERVAL = 1000000; /**< @type integer Default connect retry interval in micro seconds. */
 	const SOCKET_SELECT_TIMEOUT = 1000000; /**< @type integer Default socket select timeout in micro seconds. */
+    
+    const CERT_TYPE_PEM = 'PEM'; /**< @type string Certificate file type PEM. */
+    const CERT_TYPE_DER = 'DER'; /**< @type string Certificate file type DER. */
+    const CERT_TYPE_ENG = 'ENG'; /**< @type string Certificate file type ENG. */
+    const CERT_TYPE_P12 = 'P12'; /**< @type string Certificate file type P12. */
 
 	protected $_aServiceURLs = array(); /**< @type array Container for service URLs environments. */
 	protected $_aHTTPServiceURLs = array(); /**< @type array Container for HTTP/2 service URLs environments. */
@@ -60,7 +65,8 @@ abstract class ApnsPHP_Abstract
 	protected $_nConnectTimeout; /**< @type integer Connect timeout in seconds. */
 	protected $_nConnectRetryTimes = 3; /**< @type integer Connect retry times. */
 
-	protected $_sProviderCertificateFile; /**< @type string Provider certificate file with key (Bundled PEM). */
+	protected $_sProviderCertificateFile; /**< @type string Provider certificate file with key. */
+    protected $_sProviderCertificateType; /**< @type string Provider certificate type. */
 	protected $_sProviderCertificatePassphrase; /**< @type string Provider certificate passphrase. */
 	protected $_sRootCertificationAuthorityFile; /**< @type string Root certification authority file. */
 
@@ -77,7 +83,7 @@ abstract class ApnsPHP_Abstract
 	 *
 	 * @param  $nEnvironment @type integer Environment.
 	 * @param  $sProviderCertificateFile @type string Provider certificate file
-	 *         with key (Bundled PEM).
+	 *         with key.
 	 * @param  $nProtocol @type integer Protocol.
 	 * @throws ApnsPHP_Exception if the environment is not
 	 *         sandbox or production or the provider certificate file is not readable.
@@ -164,6 +170,17 @@ abstract class ApnsPHP_Abstract
 	{
 		$this->_sProviderCertificatePassphrase = $sProviderCertificatePassphrase;
 	}
+
+    /**
+     * Set the Provider Certificate type.
+     * @see https://www.php.net/manual/ru/function.curl-setopt.php (CURLOPT_SSLCERTTYPE)
+     * 
+     * @param string $sProviderCertificateType
+     */
+	public function setProviderCertificateType($sProviderCertificateType)
+    {
+        $this->_sProviderCertificateType = $sProviderCertificateType;
+    }
 
 	/**
 	 * Set the Root Certification Authority file.
@@ -416,6 +433,7 @@ abstract class ApnsPHP_Abstract
 			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2_0,
 			CURLOPT_SSLCERT => $this->_sProviderCertificateFile,
 			CURLOPT_SSLCERTPASSWD => empty($this->_sProviderCertificatePassphrase) ? null : $this->_sProviderCertificatePassphrase,
+            CURLOPT_SSLCERTTYPE => empty($this->_sProviderCertificateType) ? self::CERT_TYPE_PEM : $this->_sProviderCertificateType,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_USERAGENT => 'ApnsPHP',
 			CURLOPT_CONNECTTIMEOUT => 10,
