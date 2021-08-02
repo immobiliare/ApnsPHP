@@ -55,6 +55,8 @@ class ApnsPHP_Message
 
 	protected $_mCustomIdentifier; /**< @type mixed Custom message identifier. */
 
+	protected $_sTopic; /**< @type string The topic of the remote notification, which is typically the bundle ID for your app. */
+
 	/**
 	 * Constructor.
 	 *
@@ -572,5 +574,26 @@ class ApnsPHP_Message
 	public function getCustomIdentifier()
 	{
 		return $this->_mCustomIdentifier;
+	}
+
+	/**
+	 * Set the topic of the remote notification, which is typically
+	 * the bundle ID for your app.
+	 *
+	 * @param  $sTopic @type string The topic of the remote notification.
+	 */
+	public function setTopic($sTopic)
+	{
+		$this->_sTopic = $sTopic;
+	}
+
+	/**
+	 * Get the topic of the remote notification.
+	 *
+	 * @return @type string The topic of the remote notification.
+	 */
+	public function getTopic()
+	{
+		return $this->_sTopic;
 	}
 }

@@ -20,7 +20,7 @@
 
 @implementation DemoAppDelegate
 
-@synthesize window, textView;
+@synthesize window, textView, viewController;
 
 #pragma mark -
 #pragma mark Application lifecycle
@@ -29,13 +29,19 @@
   [window makeKeyAndVisible];
 
 #if !TARGET_IPHONE_SIMULATOR
-  [application registerForRemoteNotificationTypes: 
-   UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound];
+  [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:nil]];
+  [application registerForRemoteNotifications];
 #endif
   
   application.applicationIconBadgeNumber = 0;
   self.textView.text = [launchOptions description];
   
+  self.viewController = [[UIViewController alloc] initWithNibName:nil
+                                                           bundle:nil];
+  self.window.rootViewController = self.viewController;
+
+  NSLog(@"Started.");
+    
   return YES;
 }
 
@@ -49,14 +55,18 @@
   
   if (application.applicationState == UIApplicationStateActive) {
     // Nothing to do if applicationState is Inactive, the iOS already displayed an alert view.
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Did receive a Remote Notification"
-                                                        message:[NSString stringWithFormat:@"The application received this remote notification while it was running:\n%@",
-                                                                 [[userInfo objectForKey:@"aps"] objectForKey:@"alert"]]
-                                                       delegate:self
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-    [alertView show];
-    [alertView release];
+      
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Did receive a Remote Notification"
+                                                                             message:[NSString stringWithFormat:@"The application received this remote notification while it was running:\n%@", [[userInfo objectForKey:@"aps"] objectForKey:@"alert"]]
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"OK"
+                                                          style:UIAlertActionStyleDefault
+                                                        handler:^(UIAlertAction *action) {
+                                                            [alertController dismissViewControllerAnimated:YES completion:nil];
+                                                        }];
+      
+    [alertController addAction:alertAction];
+    [self.viewController presentViewController:alertController animated:YES completion:nil];
   }
 }
 
@@ -80,8 +90,9 @@
 #pragma mark Memory management
 
 - (void)dealloc {
-    [window release];
-    [super dealloc];
+  [viewController release];
+  [window release];
+  [super dealloc];
 }
 
 @end

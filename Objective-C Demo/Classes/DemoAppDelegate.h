@@ -21,10 +21,12 @@
 @interface DemoAppDelegate : NSObject <UIApplicationDelegate> {
   UIWindow *window;
   UITextView *textView;
+  UIViewController *viewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet UITextView *textView;
+@property (nonatomic, retain) IBOutlet UIViewController *viewController;
 
 @end
 

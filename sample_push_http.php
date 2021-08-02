@@ -31,20 +31,24 @@ require_once 'ApnsPHP/Autoload.php';
 // Instantiate a new ApnsPHP_Push object
 $push = new ApnsPHP_Push(
 	ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
-	'server_certificates_bundle_sandbox.pem'
+	'UniversalPushNotificationClientSSLCertificate.pem',
+	ApnsPHP_Abstract::PROTOCOL_HTTP
 );
+
+// Set the write interval to null for the HTTP/2 Protocol.
+$push->setWriteInterval(0);
 
 // Set the Provider Certificate passphrase
 // $push->setProviderCertificatePassphrase('test');
-
-// Set the Root Certificate Autority to verify the Apple remote peer
-$push->setRootCertificationAuthority('entrust_root_certification_authority.pem');
 
 // Connect to the Apple Push Notification Service
 $push->connect();
 
 // Instantiate a new Message with a single recipient
 $message = new ApnsPHP_Message('19e4d2cb683e6302ff688b0fe9b6f562c40ea5a31a10d593f82b6d6bf1c88678');
+
+// Set the topic of the remote notification (the bundle ID for your app)
+$message->setTopic('com.armiento.test');
 
 // Set a custom identifier. To get back this identifier use the getCustomIdentifier() method
 // over a ApnsPHP_Message object retrieved with the getErrors() message.
